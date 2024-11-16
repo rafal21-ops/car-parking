@@ -1,11 +1,10 @@
-// Import the functions you need from the SDKs you need
+import { ReservationEntity } from '../../domain/entities/reservation.entity';
+import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
+import { ReservationsPort } from '../../domain/abstracts/reservationsPort';
+import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAMPJHHB8b7aqsgMc6T2dAHuq-Nv06lEVg",
   authDomain: "car-parking-51799.firebaseapp.com",
@@ -19,3 +18,29 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+
+export class Firebase implements ParkingSpotsPort, ReservationsPort {
+    constructor() {
+    console.log('Firebase initialized');
+    }
+
+    getAllReservations(): ReservationEntity[] {
+        throw new Error('Method not implemented.');
+    }
+    
+    get(id: string): ReservationEntity | null {
+        throw new Error('Method not implemented.');
+    }
+   
+    add(reservation: ReservationEntity): void {
+        throw new Error('Method not implemented.');
+    }
+   
+    remove(reservation: ReservationEntity): void {
+        throw new Error('Method not implemented.');
+    }
+   
+    getAllParkingSpots(): ParkingSpotEntity[] {
+        throw new Error('Method not implemented.');
+    }
+}
