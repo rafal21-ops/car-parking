@@ -3,8 +3,7 @@ import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
 import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
-import { getFirestore, collection, getDocs, query, where, QuerySnapshot, DocumentData } from 'firebase/firestore/lite';
+import { Firestore, getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGaPJCpOVkvalcAcGLZoMimZOVgTGnwBM",
@@ -16,16 +15,20 @@ const firebaseConfig = {
 };
 
 export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort {
+  private readonly PARKING_SPOTS_COLLECTION_NAME: string = 'parkingSpots';
+  private readonly RESERVATIONS_COLLECTION_NAME: string = 'reservations';
+
+  private db: Firestore;
   private parkingSpots: ParkingSpotEntity[] = [];
   private reservations: ReservationEntity[] = [];
 
   constructor() {
     console.log('Initializing Firebase');
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    this.db = getFirestore(app);
     
     console.log('Getting parking spots from Firebase');
-    const parkingSpots = collection(db, 'parkingSpots');
+    const parkingSpots = collection(this.db, this.PARKING_SPOTS_COLLECTION_NAME);
 
     getDocs(parkingSpots).then(parkingSpots => {
       this.parkingSpots = parkingSpots.docs.map(
@@ -34,7 +37,7 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
     });
 
     console.log('Getting reservations from Firebase');
-    const reservations = collection(db, 'reservations');
+    const reservations = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
     getDocs(reservations).then(reservations => {
       this.reservations = reservations.docs.map(
         doc => new ReservationEntity(doc.id, doc.get('user'), new Date(doc.get('date')), doc.get('parkingSpotId')));
@@ -46,11 +49,21 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
   }
 
   get(id: string): ReservationEntity | null {
-    throw new Error('Method not implemented.');
+    return this.reservations.find(reservation => reservation.id === id) || null;
   }
 
   add(reservation: ReservationEntity): void {
-    throw new Error('Method not implemented.');
+    try {
+      const reservations = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
+  
+      addDoc(reservations, {
+        user: reservation.user,
+        date: reservation.date,
+        parkingSpotId: reservation.spotId
+      });
+    } catch (error) {
+      console.error('Error adding document:', error);
+    }
   }
 
   remove(reservation: ReservationEntity): void {
