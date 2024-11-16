@@ -1,0 +1,18 @@
+<nz-table #basicTable [nzData]="dataSet">
+  <thead>
+  <tr>
+    <th>Numer miejsca</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let data of basicTable.data">
+    <td>{{data.number}}</td>
+    <td>{{ isParkingSpotFree(data) ? 'wolne' : 'zajęte' }}</td>
+    <td>
+      <button (click)="onReservation(data.id)">Rezerwuj</button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>
