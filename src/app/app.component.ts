@@ -10,7 +10,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import {ParkingSpotUseCase} from '../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { ParkingSpotEntity } from '../../libs/domain/entities/parking-spot.entity';
 import { InMemoryClass } from '../../libs/infrastructure/in-memory/in-memory';
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, NgForOf } from '@angular/common';
+import { NzTableComponent } from 'ng-zorro-antd/table';
 
 @Component({
   standalone: true,
@@ -29,6 +30,8 @@ import { JsonPipe } from '@angular/common';
     NzIconDirective,
     NzIconModule,
     JsonPipe,
+    NzTableComponent,
+    NgForOf
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -36,13 +39,14 @@ import { JsonPipe } from '@angular/common';
 })
 export class AppComponent {
   title = 'syzygy';
-  spots: ParkingSpotEntity[] = [];
+  dataSet: ParkingSpotEntity[] = [];
+
 
   constructor() {
     const db = new InMemoryClass();
     const parkingSpots = new ParkingSpotUseCase();
     parkingSpots.init(db);
 
-    this.spots = parkingSpots.getAll();
+    this.dataSet = parkingSpots.getAll();
   }
 }
