@@ -1,4 +1,4 @@
-export interface Reservation {
+export class ReservationEntity {
   #id: string;
   #user: string;
   #date: Date;
