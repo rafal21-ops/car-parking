@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ParkingSpotEntity } from '../../../libs/domain/entities/parking-spot.entity';
 import { GetReservationUseCase } from '../../../libs/use-cases/reservation/get-reservation.use-case';
 import { InMemoryDataProvider } from '../../../libs/infrastructure/in-memory/in-memory';
+import { FirebaseDataProvider } from '../../../libs/infrastructure/firebase/firebase-data-provider';
 import { ParkingSpotUseCase } from '../../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
 import { NzCalendarModule, NzCalendarComponent } from 'ng-zorro-antd/calendar';
@@ -22,6 +23,10 @@ import { NzColDirective, NzGridModule, NzRowDirective } from 'ng-zorro-antd/grid
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzImageDirective } from 'ng-zorro-antd/image';
 import { NzTagComponent } from 'ng-zorro-antd/tag';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
+import { Inject } from '@angular/core';
+import { OnDestroy } from '@angular/core';
 
 
 @Component({
@@ -33,9 +38,9 @@ import { NzTagComponent } from 'ng-zorro-antd/tag';
   templateUrl: './testing.component.html',
   styleUrl: './testing.component.scss'
 })
-export class TestingComponent {
+export class TestingComponent implements OnDestroy {
   title = 'Parking APP';
-  dataSet: ParkingSpotEntity[] = [];
+  parkingSpots: ParkingSpotEntity[] = [];
   reservations: GetReservationUseCase;
   parkingSpotsProvider!: ParkingSpotUseCase;
   #modalService = inject(NzModalService);
@@ -48,18 +53,33 @@ export class TestingComponent {
 
   isVisible = false;
 
-  constructor() {
-    const db = new InMemoryDataProvider();
-    this.parkingSpotsProvider = new ParkingSpotUseCase(db);
-    this.dataSet = this.parkingSpotsProvider.getAll();
-    this.reservations = new GetReservationUseCase(db);
+  isPlatformBrowser: boolean;
+  intervalId: any;
 
-    // const db = new FirebaseDataProvider();
-    // this.parkingSpotsProvider = new ParkingSpotUseCase(db);
-    // setTimeout(() => {
-    //   this.dataSet = this.parkingSpotsProvider.getAll();
-    // }, 5000);
-    // this.reservations = new GetReservationUseCase(db);    
+  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+    this.isPlatformBrowser = isPlatformBrowser(platformId);
+
+    const db = new FirebaseDataProvider();
+    this.parkingSpotsProvider = new ParkingSpotUseCase(db);
+    this.reservations = new GetReservationUseCase(db);
+  }
+
+  ngOnInit() {
+    // hack the hell out of it, we can't use setInterval in SSR
+    if (this.isPlatformBrowser) {
+      // this is all shit, but enables us to use simple array based, non-async domain model
+      // this should be eventually changed tho :P 
+      this.intervalId = setInterval(() => {
+        this.parkingSpots = this.parkingSpotsProvider.getAll();
+      }, 100); // and this code is slow of course because it adds <=100ms delay
+    }
+    // but works :P
+  }
+
+  ngOnDestroy() {
+    if (this.isPlatformBrowser) {
+      clearInterval(this.intervalId);
+    }
   }
 
   showModal(): void {
@@ -85,9 +105,9 @@ export class TestingComponent {
       id, 'Adam Kowalski', new Date()
     );
 
-    this.dataSet = this.parkingSpotsProvider.getAll();
+    this.parkingSpots = this.parkingSpotsProvider.getAll();
     console.log(this.reservations.getAll());
-    console.log(this.dataSet);
+    console.log(this.parkingSpots);
   }
 
   onReservation(id: string): void {
