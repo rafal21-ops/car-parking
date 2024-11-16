@@ -25,10 +25,8 @@ export class GetReservationUseCase {
     this.reservations.add(reservation);
   }
 
-
   isParkingSpotFree(parkingSpotId: string, date: Date = new Date()): boolean {
     const reservations = this.reservations.getByParkingSpotId(parkingSpotId);
-    console.log(reservations)
     return !reservations.some((reservation) => sameDay(reservation.date, date));
   }
 }

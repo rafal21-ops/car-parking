@@ -52,11 +52,14 @@ export class AppComponent {
 
 
   constructor() {
-    const db = new InMemoryDataProvider();
-    // const db = new FirebaseDataProvider();
+    // const db = new InMemoryDataProvider();
+    const db = new FirebaseDataProvider();
 
     const parkingSpots = new ParkingSpotUseCase(db);
-    this.dataSet = parkingSpots.getAll();
+    setTimeout(() => {
+      this.dataSet = parkingSpots.getAll();
+    }, 5000);
+
     this.reservations = new GetReservationUseCase(db);
   }
 
