@@ -9,7 +9,7 @@ import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import {ParkingSpotUseCase} from '../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { ParkingSpotEntity } from '../../libs/domain/entities/parking-spot.entity';
-import { InMemoryClass } from '../../libs/infrastructure/in-memory/in-memory';
+import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
 import { NgForOf } from '@angular/common';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 
@@ -42,7 +42,7 @@ export class AppComponent {
 
 
   constructor() {
-    const db = new InMemoryClass();
+    const db = new InMemoryDataProvider();
     const parkingSpots = new ParkingSpotUseCase(db);
 
     this.dataSet = parkingSpots.getAll();

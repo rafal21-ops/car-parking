@@ -19,7 +19,7 @@ export const InMemoryParkingSpots: ParkingSpotEntity[] = [
   new ParkingSpotEntity('5', '115'),
 ];
 
-export class InMemoryClass implements ParkingSpotsPort, ReservationsPort {
+export class InMemoryDataProvider implements ParkingSpotsPort, ReservationsPort {
   reservations: ReservationEntity[] = InMemoryReservations;
   parkingSpots: ParkingSpotEntity[] = InMemoryParkingSpots;
 
