@@ -21,7 +21,7 @@ export class GetReservationUseCase {
   }
 
   addReservation(parkingSpotId: string, user: string, date: Date): void {
-    const reservation = new ReservationEntity(parkingSpotId, user, date, '');
+    const reservation = new ReservationEntity(parkingSpotId, user, date );
     this.reservations.add(reservation);
   }
 
