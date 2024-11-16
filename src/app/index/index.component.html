@@ -9,18 +9,18 @@
   [nzOkLoading]="isOkLoading"
 >
   <ng-container *nzModalContent>
-    <form nz-form class="login-form" (ngSubmit)="submitForm()">
+    <form [formGroup]="userForm" nz-form class="login-form" (ngSubmit)="submitForm()">
       <nz-form-item>
         <nz-form-control nzErrorTip="Please input your username!">
           <nz-input-group nzPrefixIcon="user">
-            <input type="text" nz-input placeholder="Imie i nazwisko" />
+            <input formControlName="userName" type="text" nz-input placeholder="Imie i nazwisko" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="Please input your Password!">
           <nz-input-group nzPrefixIcon="lock">
-            <input type="email" nz-input placeholder="Email" />
+            <input formControlName="userName" type="email" nz-input placeholder="Email" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>

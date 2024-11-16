@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NzBreadCrumbComponent, NzBreadCrumbItemComponent } from 'ng-zorro-antd/breadcrumb';
 import { NzContentComponent, NzFooterComponent, NzHeaderComponent, NzLayoutComponent } from 'ng-zorro-antd/layout';
@@ -7,12 +7,18 @@ import { NzAvatarComponent } from 'ng-zorro-antd/avatar';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import {ParkingSpotUseCase} from '../../libs/use-cases/parking-spot/parking-spot.use-case';
+import { ParkingSpotUseCase } from '../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { ParkingSpotEntity } from '../../libs/domain/entities/parking-spot.entity';
 import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
 import { FirebaseDataProvider } from '../../libs/infrastructure/firebase/firebase-data-provider';
 import { NgForOf } from '@angular/common';
 import { NzTableComponent } from 'ng-zorro-antd/table';
+import { LocalStorageService } from './services/localStorage.service';
+
+export interface UserInformation {
+  userName: string;
+  email: string;
+}
 import { GetReservationUseCase } from '../../libs/use-cases/reservation/get-reservation.use-case';
 
 @Component({
@@ -36,18 +42,19 @@ import { GetReservationUseCase } from '../../libs/use-cases/reservation/get-rese
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'syzygy';
+  title = 'Parking APP';
   dataSet: ParkingSpotEntity[] = [];
   reservations: GetReservationUseCase;
+  userInformation: UserInformation | null;
 
 
   constructor() {
     const db = new InMemoryDataProvider();
     // const db = new FirebaseDataProvider();
-    
+
     const parkingSpots = new ParkingSpotUseCase(db);
     this.dataSet = parkingSpots.getAll();
 
