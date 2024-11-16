@@ -27,7 +27,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './index.component.scss',
 })
 export class IndexComponent {
-  isVisible = true;
+  isVisible = false;
   isOkLoading = false;
 
   showModal(): void {
