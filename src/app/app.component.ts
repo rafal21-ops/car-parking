@@ -48,7 +48,7 @@ export class AppComponent {
   title = 'Parking APP';
   dataSet: ParkingSpotEntity[] = [];
   reservations: GetReservationUseCase;
-  userInformation: UserInformation | null;
+  userInformation: UserInformation | null | undefined;
 
 
   constructor() {
@@ -57,7 +57,6 @@ export class AppComponent {
 
     const parkingSpots = new ParkingSpotUseCase(db);
     this.dataSet = parkingSpots.getAll();
-
     this.reservations = new GetReservationUseCase(db);
   }
 
@@ -70,3 +69,4 @@ export class AppComponent {
     console.log('click', id)
   }
 }
+
