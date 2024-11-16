@@ -12,6 +12,7 @@ import { ParkingSpotEntity } from '../../libs/domain/entities/parking-spot.entit
 import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
 import { NgForOf } from '@angular/common';
 import { NzTableComponent } from 'ng-zorro-antd/table';
+import { GetReservationUseCase } from '../../libs/use-cases/reservation/get-reservation.use-case';
 
 @Component({
   standalone: true,
@@ -39,15 +40,22 @@ import { NzTableComponent } from 'ng-zorro-antd/table';
 export class AppComponent {
   title = 'syzygy';
   dataSet: ParkingSpotEntity[] = [];
+  reservations: GetReservationUseCase;
 
 
   constructor() {
     const db = new InMemoryDataProvider();
-    const parkingSpots = new ParkingSpotUseCase(db);
 
+    const parkingSpots = new ParkingSpotUseCase(db);
     this.dataSet = parkingSpots.getAll();
+
+    this.reservations = new GetReservationUseCase(db);
   }
 
+
+  isParkingSpotFree(parkingSpot: ParkingSpotEntity): boolean {
+    return this.reservations.isParkingSpotFree(parkingSpot.id);
+  }
 
   onReservation(id: string): void {
     console.log('click', id)

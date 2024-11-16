@@ -7,7 +7,6 @@ export const InMemoryReservations: ReservationEntity[] = [
   new ReservationEntity('1', 'Adam', new Date('2024-11-16T10:00:00'), '1'),
   new ReservationEntity('2', 'Andrzej', new Date('2024-11-16T11:00:00'), '2'),
   new ReservationEntity('3', 'Anna', new Date('2024-11-16T12:00:00'), '3'),
-  new ReservationEntity('4', 'Barbara', new Date('2024-11-16T13:00:00'), '4'),
   new ReservationEntity('5', 'Cezary', new Date('2024-11-16T14:00:00'), '5'),
 ];
 
@@ -49,5 +48,9 @@ export class InMemoryDataProvider implements ParkingSpotsPort, ReservationsPort 
 
   getAllParkingSpots(): ParkingSpotEntity[] {
     return this.parkingSpots;
+  }
+
+  getByParkingSpotId(id: string): ReservationEntity[] {
+    return this.reservations.filter(reservation => reservation.spotId === id);
   }
 }

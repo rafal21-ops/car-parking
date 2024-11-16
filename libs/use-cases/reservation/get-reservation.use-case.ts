@@ -1,6 +1,14 @@
 import { ReservationEntity } from '../../domain/entities/reservation.entity';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 
+function sameDay(d1: Date, d2: Date) {
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+  );
+}
+
 export class GetReservationUseCase {
   constructor(private readonly reservations: ReservationsPort) {}
 
@@ -17,5 +25,8 @@ export class GetReservationUseCase {
     this.reservations.add(reservation);
   }
 
-
+  isParkingSpotFree(parkingSpotId: string, date: Date = new Date()): boolean {
+    const reservations = this.reservations.getByParkingSpotId(parkingSpotId);
+    return !reservations.some((reservation) => sameDay(reservation.date, date));
+  }
 }
