@@ -1,9 +1,10 @@
 import { ReservationEntity } from '../../domain/entities/reservation.entity';
 import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
-import { ReservationsPort } from '../../domain/abstracts/reservationsPort';
 import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
+import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAMPJHHB8b7aqsgMc6T2dAHuq-Nv06lEVg',
@@ -17,9 +18,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
-export class Firebase implements ParkingSpotsPort, ReservationsPort {
+export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort {
   constructor() {
     console.log('Firebase initialized');
   }
