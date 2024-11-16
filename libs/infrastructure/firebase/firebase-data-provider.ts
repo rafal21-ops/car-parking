@@ -4,7 +4,7 @@ import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAMPJHHB8b7aqsgMc6T2dAHuq-Nv06lEVg',
@@ -42,11 +42,24 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
     throw new Error('Method not implemented.');
   }
 
-  getAllParkingSpots(): ParkingSpotEntity[] {
-    throw new Error('Method not implemented.');
+  async getAllParkingSpots(): Promise<ParkingSpotEntity[]> {
+    console.log('Getting parking spots from Firebase');
+    const parkingSpots = collection(db, 'parkingSpots');
+    const parkingSpotsSnapshot = await getDocs(parkingSpots);
+    const parkingSpotsList = parkingSpotsSnapshot.docs.map(
+      doc => new ParkingSpotEntity(doc.id, doc.get('number')));
+    
+    return parkingSpotsList;
   }
 
-  getByParkingSpotId(id: string): ReservationEntity[] {
-    throw new Error('Method not implemented.');
-  }  
+  async getByParkingSpotId(id: string): Promise<ReservationEntity[]> {
+    console.log('Getting reservations from Firebase');
+    const reservations = collection(db, 'reservations');
+    const parkingSpotIdQuery = query(reservations, where('parkingSpotId', '==', id));
+    const reservationsSnapshot = await getDocs(parkingSpotIdQuery);
+    const reservationsList = reservationsSnapshot.docs.map(
+      doc => new ReservationEntity(doc.id, doc.get('user'), doc.get('date'), doc.get('parkingSpotId')));
+    
+    return reservationsList;
+  }
 }

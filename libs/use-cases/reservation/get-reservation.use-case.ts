@@ -25,8 +25,8 @@ export class GetReservationUseCase {
     this.reservations.add(reservation);
   }
 
-  isParkingSpotFree(parkingSpotId: string, date: Date = new Date()): boolean {
-    const reservations = this.reservations.getByParkingSpotId(parkingSpotId);
+  async isParkingSpotFree(parkingSpotId: string, date: Date = new Date()): Promise<boolean> {
+    const reservations = await this.reservations.getByParkingSpotId(parkingSpotId);
     return !reservations.some((reservation) => sameDay(reservation.date, date));
   }
 }

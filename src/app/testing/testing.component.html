@@ -9,7 +9,7 @@
   <tbody>
   <tr *ngFor="let data of basicTable.data">
     <td>{{data.number}}</td>
-    <td>{{ isParkingSpotFree(data) ? 'wolne' : 'zajęte' }}</td>
+    <td>{{ (isParkingSpotFree(data) | async) ? 'wolne' : 'zajęte' }}</td>
     <td>
       <button (click)="onReservation(data.id)">Rezerwuj</button>
     </td>

@@ -11,7 +11,7 @@ import { ParkingSpotUseCase } from '../../libs/use-cases/parking-spot/parking-sp
 import { ParkingSpotEntity } from '../../libs/domain/entities/parking-spot.entity';
 import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
 import { FirebaseDataProvider } from '../../libs/infrastructure/firebase/firebase-data-provider';
-import { NgForOf } from '@angular/common';
+import { AsyncPipe, NgForOf } from '@angular/common';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 import { LocalStorageService } from './services/localStorage.service';
 
@@ -38,7 +38,8 @@ import { GetReservationUseCase } from '../../libs/use-cases/reservation/get-rese
     NzIconDirective,
     NzIconModule,
     NzTableComponent,
-    NgForOf
+    NgForOf,
+    AsyncPipe
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -56,13 +57,19 @@ export class AppComponent {
     // const db = new FirebaseDataProvider();
 
     const parkingSpots = new ParkingSpotUseCase(db);
-    this.dataSet = parkingSpots.getAll();
+    parkingSpots.getAll().then(parkingSpots => {
+      this.dataSet = parkingSpots;
+      parkingSpots.forEach(parkingSpot => {
+        console.log(this.reservations.isParkingSpotFree(parkingSpot.id).then(console.log));
+      });
+    });
+
     this.reservations = new GetReservationUseCase(db);
   }
 
-
   isParkingSpotFree(parkingSpot: ParkingSpotEntity): boolean {
-    return this.reservations.isParkingSpotFree(parkingSpot.id);
+    console.log('isParkingSpotFree');
+    return false;
   }
 
   onReservation(id: string): void {

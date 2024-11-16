@@ -46,11 +46,13 @@ export class InMemoryDataProvider implements ParkingSpotsPort, ReservationsPort 
     return this.reservations;
   }
 
-  getAllParkingSpots(): ParkingSpotEntity[] {
-    return this.parkingSpots;
+  getAllParkingSpots(): Promise<ParkingSpotEntity[]> {
+    console.log('Getting parking spots from memory');
+    return Promise.resolve(this.parkingSpots);
   }
 
-  getByParkingSpotId(id: string): ReservationEntity[] {
-    return this.reservations.filter(reservation => reservation.spotId === id);
+  getByParkingSpotId(id: string): Promise<ReservationEntity[]> {
+    console.log('Getting reservations from memory');
+    return Promise.resolve(this.reservations.filter(reservation => reservation.spotId === id));
   }
 }

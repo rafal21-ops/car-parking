@@ -29,7 +29,8 @@
     </nz-breadcrumb>
     <div class="inner-content">
 
-      <nz-table #basicTable [nzData]="dataSet">
+      <!-- <nz-table #basicTable [nzData]="dataSet"> -->
+      <table>
         <thead>
         <tr>
           <th>Numer miejsca</th>
@@ -38,7 +39,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let data of basicTable.data">
+        <!-- <tr *ngFor="let data of basicTable.data"> -->
+        <tr *ngFor="let data of dataSet">
           <td>{{data.number}}</td>
           <td>{{ isParkingSpotFree(data) ? 'wolne' : 'zajęte' }}</td>
           <td>
@@ -46,7 +48,8 @@
           </td>
         </tr>
         </tbody>
-      </nz-table>
+      <!-- </nz-table> -->
+      </table>
 
 
       <router-outlet></router-outlet>
