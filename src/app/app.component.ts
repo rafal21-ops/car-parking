@@ -53,23 +53,20 @@ export class AppComponent {
 
 
   constructor() {
-    const db = new InMemoryDataProvider();
-    // const db = new FirebaseDataProvider();
+    // const db = new InMemoryDataProvider();
+    const db = new FirebaseDataProvider();
 
     const parkingSpots = new ParkingSpotUseCase(db);
-    parkingSpots.getAll().then(parkingSpots => {
-      this.dataSet = parkingSpots;
-      parkingSpots.forEach(parkingSpot => {
-        console.log(this.reservations.isParkingSpotFree(parkingSpot.id).then(console.log));
-      });
-    });
+    setTimeout(() => {
+      this.dataSet = parkingSpots.getAll();
+    }, 5000);
 
     this.reservations = new GetReservationUseCase(db);
   }
 
   isParkingSpotFree(parkingSpot: ParkingSpotEntity): boolean {
     console.log('isParkingSpotFree');
-    return false;
+    return this.reservations.isParkingSpotFree(parkingSpot.id);
   }
 
   onReservation(id: string): void {

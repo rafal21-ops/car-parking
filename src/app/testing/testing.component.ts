@@ -24,15 +24,13 @@ export class TestingComponent {
     // const db = new FirebaseDataProvider();
 
     const parkingSpots = new ParkingSpotUseCase(db);
-    parkingSpots.getAll().then(data => {
-      this.dataSet = data;
-    });
+    this.dataSet = parkingSpots.getAll();
 
     this.reservations = new GetReservationUseCase(db);
   }
 
 
-  async isParkingSpotFree(parkingSpot: ParkingSpotEntity): Promise<boolean> {
+  isParkingSpotFree(parkingSpot: ParkingSpotEntity): boolean {
     return this.reservations.isParkingSpotFree(parkingSpot.id);
   }
 
