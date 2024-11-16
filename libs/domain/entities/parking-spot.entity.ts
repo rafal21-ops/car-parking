@@ -1,8 +1,9 @@
-import { ReservationEntity } from './reservation.entity';
-
 export class ParkingSpotEntity {
-  #id: string;
-  #number: number;
-  #owner: string;
-  #reservations: ReservationEntity[];
+  id: string;
+  number: string;
+
+  constructor(id: string, number: string) {
+    this.id = id;
+    this.number = number;
+  }
 }
