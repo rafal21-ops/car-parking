@@ -1,6 +1,8 @@
 import { ReservationEntity } from '../../domain/entities/reservation.entity';
 import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
 import { ParkingSpotPort } from '../../use-cases/parking-spot/parking-spot.use-case';
+import { ReservationsPort } from '../../domain/abstracts/reservationsPort';
+
 export const InMemoryReservations: ReservationEntity[] = [
   new ReservationEntity('1', 'Adam', new Date()),
   new ReservationEntity('2', 'Andrzej', new Date()),
@@ -24,10 +26,7 @@ export const InMemoryReservations: ReservationEntity[] = [
   new ReservationEntity('20', 'Zofia', new Date()),
 ];
 
-
-
-
-export const ParkingSpots: ParkingSpotEntity[] = [
+export const InMemoryParkingSpots: ParkingSpotEntity[] = [
   new ParkingSpotEntity('1', '111'),
   new ParkingSpotEntity('2', '112'),
   new ParkingSpotEntity('3', '113'),
@@ -50,9 +49,35 @@ export const ParkingSpots: ParkingSpotEntity[] = [
   new ParkingSpotEntity('20', '130'),
 ];
 
+export class InMemoryClass implements ParkingSpotPort, ReservationsPort {
+  reservations: ReservationEntity[] = InMemoryReservations;
+  parkingSpots: ParkingSpotEntity[] = InMemoryParkingSpots;
 
-export class InMemoryClass implements ParkingSpotPort {
+  get(id: string): ReservationEntity | null {
+    return (
+      this.reservations.find((reservation: ReservationEntity) => {
+        return reservation.id === id;
+      }) || null
+    );
+  }
+
+  add(reservation: ReservationEntity): void {
+    this.reservations.push(reservation);
+  }
+
+  remove(reservationToRemove: ReservationEntity): void {
+    this.reservations = this.reservations.filter(
+      (reservation: ReservationEntity) => {
+        return reservation.id !== reservationToRemove.id;
+      }
+    );
+  }
+
+  getAllReservations(): ReservationEntity[] {
+    return this.reservations;
+  }
+
   getAll(): ParkingSpotEntity[] {
-    return ParkingSpots;
+    return this.parkingSpots;
   }
 }

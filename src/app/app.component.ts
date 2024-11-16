@@ -10,7 +10,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import {ParkingSpotUseCase} from '../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { ParkingSpotEntity } from '../../libs/domain/entities/parking-spot.entity';
 import { InMemoryClass } from '../../libs/infrastructure/in-memory/in-memory';
-import { JsonPipe, NgForOf } from '@angular/common';
+import { NgForOf } from '@angular/common';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 
 @Component({
@@ -29,7 +29,6 @@ import { NzTableComponent } from 'ng-zorro-antd/table';
     NzButtonComponent,
     NzIconDirective,
     NzIconModule,
-    JsonPipe,
     NzTableComponent,
     NgForOf
   ],
