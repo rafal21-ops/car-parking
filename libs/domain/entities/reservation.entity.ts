@@ -1,6 +1,10 @@
 export class ReservationEntity {
 
-  constructor(private readonly _id: string, private readonly _user: string, private readonly _date: Date) {}
+  constructor(
+    private readonly _id: string,
+    private readonly _user: string,
+    private readonly _date: Date,
+    private readonly _spotId: string) {}
 
 
   get id() {
@@ -13,6 +17,10 @@ export class ReservationEntity {
 
   get date() {
     return this._date;
+  }
+
+  get spotId() {
+    return this._spotId;
   }
 
 }

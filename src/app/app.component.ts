@@ -47,4 +47,9 @@ export class AppComponent {
 
     this.dataSet = parkingSpots.getAll();
   }
+
+
+  onReservation(id: string): void {
+    console.log('click', id)
+  }
 }

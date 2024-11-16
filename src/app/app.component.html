@@ -33,13 +33,17 @@
         <thead>
         <tr>
           <th>Numer miejsca</th>
-          <th>Rezerwujący</th>
+          <th>Status</th>
+          <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let data of basicTable.data">
           <td>{{data.number}}</td>
-          <td>{{data.id}}</td>
+          <td>Wolne</td>
+          <td>
+            <button (click)="onReservation(data.id)">Rezerwuj</button>
+          </td>
         </tr>
         </tbody>
       </nz-table>
