@@ -12,7 +12,7 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {},
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
