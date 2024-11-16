@@ -14,7 +14,6 @@ const icons: IconDefinition[] = [PoweroffOutline, LockOutline, UserOutline];
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideClientHydration(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
     provideNzIcons(icons),

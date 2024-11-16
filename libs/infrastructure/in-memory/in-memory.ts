@@ -4,12 +4,12 @@ import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 
 export const InMemoryReservations: ReservationEntity[] = [
-  new ReservationEntity('1', 'Adam', new Date('2024-11-16T10:00:00')),
-  new ReservationEntity('2', 'Andrzej', new Date('2024-11-16T11:00:00')),
-  new ReservationEntity('3', 'Anna', new Date('2024-11-16T12:00:00')),
-  new ReservationEntity('5', 'Cezary', new Date('2024-11-16T14:00:00')),
-  new ReservationEntity('3', 'Anna', new Date('2024-11-17T12:00:00')),
-  new ReservationEntity('5', 'Cezary', new Date('2024-11-17T14:00:00')),
+  new ReservationEntity('1', 'Adam', new Date('2024-11-16T10:00:00'), '24242'),
+  new ReservationEntity('2', 'Andrzej', new Date('2024-11-16T11:00:00'), '424242'),
+  new ReservationEntity('3', 'Anna', new Date('2024-11-16T12:00:00'), '4242'),
+  new ReservationEntity('5', 'Cezary', new Date('2024-11-16T14:00:00'), '4242'),
+  new ReservationEntity('3', 'Anna', new Date('2024-11-17T12:00:00'), '424242'),
+  new ReservationEntity('5', 'Cezary', new Date('2024-11-17T14:00:00'), '4324242'),
 ];
 
 export const InMemoryParkingSpots: ParkingSpotEntity[] = [

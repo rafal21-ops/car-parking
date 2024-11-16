@@ -1,11 +1,11 @@
 export class ReservationEntity {
 
-  private readonly _id = '2';
 
   constructor(
     private readonly _spotId: string,
     private readonly _user: string,
     private readonly _date: Date,
+    private readonly _id: string
    ) {}
 
 
