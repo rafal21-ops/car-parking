@@ -45,4 +45,8 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
   getAllParkingSpots(): ParkingSpotEntity[] {
     throw new Error('Method not implemented.');
   }
+
+  getByParkingSpotId(id: string): ReservationEntity[] {
+    throw new Error('Method not implemented.');
+  }  
 }
