@@ -1,2 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "ng-zorro-antd/ng-zorro-antd.min.css";
+.ant-picker-cell .ant-picker-cell-inner {
+  height: 32px;
+  line-height: 32px;
+  width: 100%;
+}
+.ant-picker-cell::before {
+  height: 32px;
+}

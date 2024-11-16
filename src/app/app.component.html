@@ -28,27 +28,6 @@
       <nz-breadcrumb-item>Lista miejsc parkingowych</nz-breadcrumb-item>
     </nz-breadcrumb>
     <div class="inner-content">
-
-      <nz-table #basicTable [nzData]="dataSet">
-        <thead>
-        <tr>
-          <th>Numer miejsca</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let data of basicTable.data">
-          <td>{{data.number}}</td>
-          <td>{{ isParkingSpotFree(data) ? 'wolne' : 'zajęte' }}</td>
-          <td>
-            <button (click)="onReservation(data.id)">Rezerwuj</button>
-          </td>
-        </tr>
-        </tbody>
-      </nz-table>
-
-
       <router-outlet></router-outlet>
     </div>
   </nz-content>

@@ -5,7 +5,7 @@ import { GetReservationUseCase } from '../../../libs/use-cases/reservation/get-r
 import { InMemoryDataProvider } from '../../../libs/infrastructure/in-memory/in-memory';
 import { ParkingSpotUseCase } from '../../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
-import {  NzCalendarModule, NzCalendarComponent } from 'ng-zorro-antd/calendar';
+import { NzCalendarModule, NzCalendarComponent } from 'ng-zorro-antd/calendar';
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
 import {
   NzModalComponent,
@@ -17,16 +17,19 @@ import {
 import { NzOptionComponent, NzSelectComponent } from 'ng-zorro-antd/select';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { FormsModule } from '@angular/forms';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzColDirective, NzGridModule, NzRowDirective } from 'ng-zorro-antd/grid';
+import { NzCardComponent } from 'ng-zorro-antd/card';
 
 
 @Component({
   selector: 'app-testing',
   standalone: true,
-  imports: [CommonModule,NzTableModule, NzCalendarModule, NzTableComponent,
+  imports: [CommonModule, NzCalendarModule, NzTableComponent,
     NzCalendarComponent, NzButtonComponent, NzModalComponent, NzModalContentDirective,
-    NzButtonModule, NzModalModule, NzSelectComponent, NzOptionComponent, NzInputDirective, FormsModule],
+    NzButtonModule, NzModalModule, NzSelectComponent, NzOptionComponent, NzInputDirective, FormsModule, NzDividerModule, NzTableModule, NzRowDirective, NzColDirective, NzGridModule, NzCardComponent],
   templateUrl: './testing.component.html',
-  styleUrl: './testing.component.scss',
+  styleUrl: './testing.component.scss'
 })
 export class TestingComponent {
   title = 'syzygy';
@@ -36,7 +39,7 @@ export class TestingComponent {
   parkingSpotsProvider!: ParkingSpotUseCase;
 
   #modalService = inject(NzModalService);
-  modal = inject(NzModalService)
+  modal = inject(NzModalService);
 
   value?: string;
 
@@ -47,10 +50,11 @@ export class TestingComponent {
   constructor() {
     const db = new InMemoryDataProvider();
     // const db = new FirebaseDataProvider();
-    this.parkingSpotsProvider = new ParkingSpotUseCase(db)
+    this.parkingSpotsProvider = new ParkingSpotUseCase(db);
     this.dataSet = this.parkingSpotsProvider.getAll();
     this.reservations = new GetReservationUseCase(db);
   }
+
   showModal(): void {
     this.isVisible = true;
   }
@@ -72,7 +76,7 @@ export class TestingComponent {
   makeReservation(id: string) {
     this.reservations.addReservation(
       id, 'Adam Kowalski', new Date()
-    )
+    );
 
     this.dataSet = this.parkingSpotsProvider.getAll();
     console.log(this.reservations.getAll());
@@ -81,7 +85,7 @@ export class TestingComponent {
 
   onReservation(id: string): void {
     const modal: NzModalRef = this.#modalService.create({
-      nzTitle: 'custom button demo',
+      nzTitle: 'Potwierdzenie rezerwacji',
       nzContent: 'pass array of button config to nzFooter to create multiple buttons',
       nzFooter: [
         {
@@ -93,12 +97,12 @@ export class TestingComponent {
           label: 'Confirm',
           type: 'primary',
           onClick: () => {
-           this.makeReservation(id)
+            this.makeReservation(id);
             modal.close();
           }
-        },
+        }
       ]
-    })
+    });
   }
 
   onValueChange(value: Date): void {
@@ -109,4 +113,10 @@ export class TestingComponent {
     console.log(`Current value: ${change.date}`);
     console.log(`Current mode: ${change.mode}`);
   }
+
+  disablePastDates = (current: Date): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return current < today;
+  };
 }
