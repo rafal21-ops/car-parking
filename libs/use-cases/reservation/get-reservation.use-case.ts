@@ -7,5 +7,8 @@ export class GetReservationUseCase {
     return reservations.find((reservation) => reservation.id === id) ?? null;
   }
 
+  addReservation(parkingSpotId, date, user): void {
+    new ReservationEntity(parkingSpotId, date, user);
+  }
 
 }

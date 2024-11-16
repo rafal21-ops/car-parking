@@ -1,7 +1,6 @@
 import { ReservationEntity } from '../../domain/entities/reservation.entity';
 import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
-
-
+import { ParkingSpotPort } from '../../use-cases/parking-spot/parking-spot.use-case';
 export const InMemoryReservations: ReservationEntity[] = [
   new ReservationEntity('1', 'Adam', new Date()),
   new ReservationEntity('2', 'Andrzej', new Date()),
@@ -26,6 +25,8 @@ export const InMemoryReservations: ReservationEntity[] = [
 ];
 
 
+
+
 export const ParkingSpots: ParkingSpotEntity[] = [
   new ParkingSpotEntity('1', '111'),
   new ParkingSpotEntity('2', '112'),
@@ -48,3 +49,10 @@ export const ParkingSpots: ParkingSpotEntity[] = [
   new ParkingSpotEntity('19', '129'),
   new ParkingSpotEntity('20', '130'),
 ];
+
+
+export class InMemoryClass implements ParkingSpotPort {
+  getAll(): ParkingSpotEntity[] {
+    return ParkingSpots;
+  }
+}

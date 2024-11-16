@@ -1,7 +1,13 @@
 import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
 
+export interface ParkingSpotPort {
+  getAll(): ParkingSpotEntity[];
+}
+
 export class ParkingSpotUseCase {
   parkingSpots: ParkingSpotEntity[] = [];
+
+  private portDb!: ParkingSpotPort;
 
   constructor() {
     this.parkingSpots = [
@@ -11,8 +17,12 @@ export class ParkingSpotUseCase {
     ];
   }
 
+  init(db: ParkingSpotPort) {
+    this.portDb = db;
+  }
+
   getAll(): ParkingSpotEntity[] {
-    return this.parkingSpots;
+    return this.portDb.getAll();
   }
 
   getById(id: string): ParkingSpotEntity | undefined {
