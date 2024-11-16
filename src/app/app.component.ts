@@ -43,8 +43,7 @@ export class AppComponent {
 
   constructor() {
     const db = new InMemoryClass();
-    const parkingSpots = new ParkingSpotUseCase();
-    parkingSpots.init(db);
+    const parkingSpots = new ParkingSpotUseCase(db);
 
     this.dataSet = parkingSpots.getAll();
   }

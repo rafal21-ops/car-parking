@@ -1,33 +1,10 @@
 import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
-
-export interface ParkingSpotPort {
-  getAll(): ParkingSpotEntity[];
-}
+import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 
 export class ParkingSpotUseCase {
-  parkingSpots: ParkingSpotEntity[] = [];
-
-  private portDb!: ParkingSpotPort;
-
-  constructor() {
-    this.parkingSpots = [
-      new ParkingSpotEntity('1', '111'),
-      new ParkingSpotEntity('2', '112'),
-      new ParkingSpotEntity('3', '113'),
-    ];
-  }
-
-  init(db: ParkingSpotPort) {
-    this.portDb = db;
-  }
+  constructor(private readonly parkingSpots: ParkingSpotsPort) {}
 
   getAll(): ParkingSpotEntity[] {
-    return this.portDb.getAll();
-  }
-
-  getById(id: string): ParkingSpotEntity | undefined {
-    return this.parkingSpots.find((parkingSpot: ParkingSpotEntity) => {
-      return parkingSpot.id === id;
-    });
+    return this.parkingSpots.getAllParkingSpots();
   }
 }

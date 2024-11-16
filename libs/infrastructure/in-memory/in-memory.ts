@@ -1,7 +1,7 @@
 import { ReservationEntity } from '../../domain/entities/reservation.entity';
 import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
-import { ParkingSpotPort } from '../../use-cases/parking-spot/parking-spot.use-case';
 import { ReservationsPort } from '../../domain/abstracts/reservationsPort';
+import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 
 export const InMemoryReservations: ReservationEntity[] = [
   new ReservationEntity('1', 'Adam', new Date()),
@@ -49,7 +49,7 @@ export const InMemoryParkingSpots: ParkingSpotEntity[] = [
   new ParkingSpotEntity('20', '130'),
 ];
 
-export class InMemoryClass implements ParkingSpotPort, ReservationsPort {
+export class InMemoryClass implements ParkingSpotsPort, ReservationsPort {
   reservations: ReservationEntity[] = InMemoryReservations;
   parkingSpots: ParkingSpotEntity[] = InMemoryParkingSpots;
 
@@ -77,7 +77,7 @@ export class InMemoryClass implements ParkingSpotPort, ReservationsPort {
     return this.reservations;
   }
 
-  getAll(): ParkingSpotEntity[] {
+  getAllParkingSpots(): ParkingSpotEntity[] {
     return this.parkingSpots;
   }
 }
