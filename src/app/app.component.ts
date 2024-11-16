@@ -10,7 +10,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ParkingSpotUseCase } from '../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { ParkingSpotEntity } from '../../libs/domain/entities/parking-spot.entity';
 import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
-import { FirebaseDataProvider } from '../../libs/infrastructure/firebase/firebase-data-provider';
 import { NgForOf } from '@angular/common';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 import { LocalStorageService } from './services/localStorage.service';
@@ -52,14 +51,10 @@ export class AppComponent {
 
 
   constructor() {
-    // const db = new InMemoryDataProvider();
-    const db = new FirebaseDataProvider();
+    const db = new InMemoryDataProvider();
 
     const parkingSpots = new ParkingSpotUseCase(db);
-    setTimeout(() => {
-      this.dataSet = parkingSpots.getAll();
-    }, 5000);
-
+    this.dataSet = parkingSpots.getAll();
     this.reservations = new GetReservationUseCase(db);
   }
 

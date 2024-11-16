@@ -50,10 +50,16 @@ export class TestingComponent {
 
   constructor() {
     const db = new InMemoryDataProvider();
-    // const db = new FirebaseDataProvider();
     this.parkingSpotsProvider = new ParkingSpotUseCase(db);
     this.dataSet = this.parkingSpotsProvider.getAll();
     this.reservations = new GetReservationUseCase(db);
+
+    // const db = new FirebaseDataProvider();
+    // this.parkingSpotsProvider = new ParkingSpotUseCase(db);
+    // setTimeout(() => {
+    //   this.dataSet = this.parkingSpotsProvider.getAll();
+    // }, 5000);
+    // this.reservations = new GetReservationUseCase(db);    
   }
 
   showModal(): void {
