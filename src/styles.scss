@@ -8,3 +8,17 @@
 .ant-picker-cell::before {
   height: 32px;
 }
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+}
+.custom-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ant-layout-content {
+  margin-top: -64px;
+  z-index: 20;
+}

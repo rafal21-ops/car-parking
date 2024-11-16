@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ParkingSpotEntity } from '../../../libs/domain/entities/parking-spot.entity';
 import { GetReservationUseCase } from '../../../libs/use-cases/reservation/get-reservation.use-case';
@@ -20,6 +20,8 @@ import { FormsModule } from '@angular/forms';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzColDirective, NzGridModule, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzCardComponent } from 'ng-zorro-antd/card';
+import { NzImageDirective } from 'ng-zorro-antd/image';
+import { NzTagComponent } from 'ng-zorro-antd/tag';
 
 
 @Component({
@@ -27,19 +29,18 @@ import { NzCardComponent } from 'ng-zorro-antd/card';
   standalone: true,
   imports: [CommonModule, NzCalendarModule, NzTableComponent,
     NzCalendarComponent, NzButtonComponent, NzModalComponent, NzModalContentDirective,
-    NzButtonModule, NzModalModule, NzSelectComponent, NzOptionComponent, NzInputDirective, FormsModule, NzDividerModule, NzTableModule, NzRowDirective, NzColDirective, NzGridModule, NzCardComponent],
+    NzButtonModule, NzModalModule, NzSelectComponent, NzOptionComponent, NzInputDirective, FormsModule, NzDividerModule, NzTableModule, NzRowDirective, NzColDirective, NzGridModule, NzCardComponent, NzImageDirective, NzTagComponent],
   templateUrl: './testing.component.html',
   styleUrl: './testing.component.scss'
 })
 export class TestingComponent {
-  title = 'syzygy';
+  title = 'Parking APP';
   dataSet: ParkingSpotEntity[] = [];
   reservations: GetReservationUseCase;
-
   parkingSpotsProvider!: ParkingSpotUseCase;
-
   #modalService = inject(NzModalService);
   modal = inject(NzModalService);
+  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   value?: string;
 
@@ -86,11 +87,11 @@ export class TestingComponent {
   onReservation(id: string): void {
     const modal: NzModalRef = this.#modalService.create({
       nzTitle: 'Potwierdzenie rezerwacji',
-      nzContent: 'pass array of button config to nzFooter to create multiple buttons',
+      nzContent: this.modalContent,
+      nzWidth: '860px',
       nzFooter: [
         {
           label: 'Close',
-          shape: 'round',
           onClick: () => modal.destroy()
         },
         {
@@ -119,4 +120,12 @@ export class TestingComponent {
     today.setHours(0, 0, 0, 0);
     return current < today;
   };
+
+  currentDate: Date = new Date();
+
+  changeMonth(offset: number): void {
+    const newDate = new Date(this.currentDate);
+    newDate.setMonth(this.currentDate.getMonth() + offset);
+    this.currentDate = newDate;
+  }
 }

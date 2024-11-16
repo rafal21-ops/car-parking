@@ -4,14 +4,26 @@
       <nz-calendar
         [nzFullscreen]="false"
         [nzDisabledDate]="disablePastDates"
+        [nzCustomHeader]="calendarHeader"
         (nzSelectChange)="onValueChange($event)"
         (nzPanelChange)="onPanelChange($event)"
       ></nz-calendar>
+      <ng-template #calendarHeader let-value let-changeMode="changeMode" let-mode="mode">
+        <div class="custom-calendar-header">
+          <button nz-button nzType="link" (click)="changeMonth(-1)">
+            &lt;
+          </button>
+          <span>{{ currentDate | date: 'MMMM yyyy' }}</span>
+          <button nz-button nzType="link" (click)="changeMonth(1)">
+            &gt;
+          </button>
+        </div>
+      </ng-template>
     </nz-card>
   </div>
   <div nz-col [nzXs]="24" [nzLg]="16">
     <nz-card nzTitle="Lista dostępnych miejsc">
-      <nz-table #basicTable [nzData]="dataSet">
+      <nz-table [nzFrontPagination]="false" #basicTable [nzData]="dataSet">
       <thead>
       <tr>
         <th>Numer miejsca</th>
@@ -22,12 +34,16 @@
       <tbody>
       <tr *ngFor="let data of basicTable.data">
         <td>{{ data.number }}</td>
-        <td>{{ isParkingSpotFree(data) ? 'Wolne' : 'Zajęte' }}</td>
         <td>
-          <button nz-button [disabled]="!isParkingSpotFree(data)" [nzType]="'primary'" (click)="onReservation(data.id)">
-        <span>
-          Zarezerwuj
-        </span>
+          @if (isParkingSpotFree(data)) {
+            <nz-tag [nzColor]="'green'">Wolne</nz-tag>
+          } @else {
+            <nz-tag [nzColor]="'red'">Zajęte</nz-tag>
+          }
+        </td>
+        <td>
+          <button nz-button nzShape="round" [disabled]="!isParkingSpotFree(data)" [nzType]="'primary'" (click)="onReservation(data.id)">
+        <span>Zarezerwuj</span>
           </button>
           <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
             <ng-container *nzModalContent>
@@ -44,4 +60,14 @@
   </div>
 </div>
 
+<ng-template #modalContent>
+  <div nz-row [nzGutter]="16">
+    <div nz-col [nzXs]="12">
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius est ratione ut!</p>
+    </div>
+    <div nz-col [nzXs]="12">
+      <img class="img-responsive" src="/supra.webp" alt="">
+    </div>
+  </div>
+</ng-template>
 
