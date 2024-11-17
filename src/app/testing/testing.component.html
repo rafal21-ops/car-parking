@@ -20,7 +20,7 @@
           }
         </td>
         <td>
-          <button nz-button nzShape="round" [disabled]="!isParkingSpotFree(data)" [nzType]="'primary'" (click)="onReservation(data.id)">
+          <button nz-button nzShape="round" [nzType]="'primary'" (click)="onReservation(data.id)">
         <span>Zarezerwuj</span>
           </button>
           <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
