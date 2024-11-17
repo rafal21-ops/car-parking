@@ -16,11 +16,6 @@ export function app(): express.Express {
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
-  
-  server.use((req, res) => {
-    const httpsUrl = `https://${req.headers.host}${req.url}`;
-    res.redirect(301, httpsUrl);
-  });
 
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
