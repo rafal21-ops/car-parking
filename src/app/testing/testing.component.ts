@@ -91,6 +91,10 @@ export class TestingComponent implements OnDestroy {
     return this.reservations.getLastReservationOwner(parkingSpot.id);
   }
 
+  getReservationDate(parkingSpot: ParkingSpotEntity): string {
+    return this.reservations.getLastReservationDate(parkingSpot.id).toLocaleDateString();
+  }
+
   saveReservation(parkingSpotId: string) {
     this.reservations.addReservation(
       parkingSpotId, this.reservationOwner, new Date()

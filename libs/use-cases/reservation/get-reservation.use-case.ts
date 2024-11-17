@@ -34,5 +34,11 @@ export class GetReservationUseCase {
     return this.reservations.getAllReservations().
       filter(reservation => reservation.spotId === parkingSpotId && sameDay(reservation.date, date)).
       sort((a, b) => a.date.getTime() - b.date.getTime()).at(-1)?.user || "?";
-  }  
+  }
+
+  getLastReservationDate(parkingSpotId: string, date: Date = new Date()): Date {
+    return this.reservations.getAllReservations().
+      filter(reservation => reservation.spotId === parkingSpotId && sameDay(reservation.date, date)).
+      sort((a, b) => a.date.getTime() - b.date.getTime()).at(-1)?.date || new Date();
+  }
 }
