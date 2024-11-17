@@ -83,20 +83,6 @@ export class TestingComponent implements OnDestroy {
     }
   }
 
-  showModal(): void {
-    this.isVisible = true;
-  }
-
-  handleOk(): void {
-    console.log('Button ok clicked!');
-    this.isVisible = false;
-  }
-
-  handleCancel(): void {
-    console.log('Button cancel clicked!');
-    this.isVisible = false;
-  }
-
   isParkingSpotFree(parkingSpot: ParkingSpotEntity): boolean {
     return this.reservations.isParkingSpotFree(parkingSpot.id, this.date);
   }
@@ -131,28 +117,5 @@ export class TestingComponent implements OnDestroy {
         }
       ]
     });
-  }
-
-  onValueChange(value: Date): void {
-    this.date = value;
-  }
-
-  onPanelChange(change: { date: Date; mode: string }): void {
-    console.log(`Current value: ${change.date}`);
-    console.log(`Current mode: ${change.mode}`);
-  }
-
-  disablePastDates = (current: Date): boolean => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return current < today;
-  };
-
-  currentDate: Date = new Date();
-
-  changeMonth(offset: number): void {
-    const newDate = new Date(this.currentDate);
-    newDate.setMonth(this.currentDate.getMonth() + offset);
-    this.currentDate = newDate;
   }
 }

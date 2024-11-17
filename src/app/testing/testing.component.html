@@ -27,13 +27,6 @@
           <button nz-button nzShape="round" [nzType]="'primary'" (click)="createReservationModal(parkingSpot.id)">
             <span>Zarezerwuj</span>
           </button>
-          <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-            <ng-container *nzModalContent>
-              <p>Content one</p>
-              <p>Content two</p>
-              <p>Content three</p>
-            </ng-container>
-          </nz-modal>
         </td>
       </tr>
       </tbody>
