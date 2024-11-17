@@ -3,7 +3,7 @@ import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
 import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 import { initializeApp } from 'firebase/app';
-import { Firestore, getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
+import { Firestore, getFirestore, collection, getDocs, addDoc, CollectionReference, DocumentData, onSnapshot } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGaPJCpOVkvalcAcGLZoMimZOVgTGnwBM",
@@ -23,26 +23,46 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
   private reservations: ReservationEntity[] = [];
 
   constructor() {
-    console.log('Initializing Firebase');
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
     
-    console.log('Getting parking spots from Firebase');
-    const parkingSpots = collection(this.db, this.PARKING_SPOTS_COLLECTION_NAME);
+    if (!this.isSSR()) {
+      const parkingSpotsCollection = collection(this.db, this.PARKING_SPOTS_COLLECTION_NAME);
+      onSnapshot(parkingSpotsCollection, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            const doc = change.doc;
+            this.parkingSpots.push(new ParkingSpotEntity(doc.id, doc.get('number')));
+            // reassign to trigger change detection in Angular
+            // yep, this is a hack
+            this.parkingSpots = [...this.parkingSpots];
+          }
+          if (change.type === 'modified') {
+            throw new Error('Modified parking spot not implemented.');
+          }
+          if (change.type === 'removed') {
+            throw new Error('Removed parking spot not implemented.');
+          }
+        });
+      });
 
-    getDocs(parkingSpots).then(parkingSpots => {
-      this.parkingSpots = parkingSpots.docs.map(
-        doc => new ParkingSpotEntity(doc.id, doc.get('number'))
-      );
-    });
-
-    console.log('Getting reservations from Firebase');
-    const reservations = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
-    getDocs(reservations).then(reservations => {
-      this.reservations = reservations.docs.map(
-        doc => new ReservationEntity(doc.get('parkingSpotId'), doc.get('user'), new Date(doc.get('date').toDate()), doc.id)
-      );
-    });
+      const reservationsCollection = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
+      onSnapshot(reservationsCollection, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            const doc = change.doc;
+            this.reservations.push(
+              new ReservationEntity(doc.get('parkingSpotId'), doc.get('user'), new Date(doc.get('date').toDate()), doc.id))
+          }
+          if (change.type === 'modified') {
+            throw new Error('Modified reservation not implemented.');
+          }
+          if (change.type === 'removed') {
+            throw new Error('Removed reservation not implemented.');
+          }
+        });
+      });
+    }
   }
 
   getAllReservations(): ReservationEntity[] {
@@ -77,5 +97,9 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
 
   getByParkingSpotId(id: string): ReservationEntity[] {
     return this.reservations.filter(reservation => reservation.spotId === id);
+  }
+
+  private isSSR(): boolean {
+    return typeof window === 'undefined';
   }
 }
