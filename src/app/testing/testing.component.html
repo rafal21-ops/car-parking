@@ -11,20 +11,20 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let data of basicTable.data">
-        <td>{{ data.number }}</td>
+      <tr *ngFor="let parkingSpot of basicTable.data">
+        <td>{{ parkingSpot.number }}</td>
         <td>
-          @if (isParkingSpotFree(data)) {
+          @if (isParkingSpotFree(parkingSpot)) {
             <nz-tag [nzColor]="'green'">Wolne</nz-tag>
           } @else {
             <nz-tag [nzColor]="'red'">Zajęte</nz-tag>
           }
         </td>
         <td>
-          <span *ngIf="!isParkingSpotFree(data)">{{ getReservationOwner(data) }}</span>
+          <span *ngIf="!isParkingSpotFree(parkingSpot)">{{ getReservationOwner(parkingSpot) }}</span>
         </td>
         <td>
-          <button nz-button nzShape="round" [nzType]="'primary'" (click)="onReservation(data.id)">
+          <button nz-button nzShape="round" [nzType]="'primary'" (click)="onReservation(parkingSpot.id)">
         <span>Zarezerwuj</span>
           </button>
           <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
