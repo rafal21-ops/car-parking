@@ -18,8 +18,10 @@ export function app(): express.Express {
   server.set('views', browserDistFolder);
   
   server.use((req, res) => {
-    const httpsUrl = `https://${req.headers.host}${req.url}`;
-    res.redirect(301, httpsUrl);
+    if (req.protocol === 'http') {
+      const httpsUrl = `https://${req.headers.host}${req.url}`;
+      res.redirect(301, httpsUrl);
+    }
   });
 
   // Example Express Rest API endpoints
