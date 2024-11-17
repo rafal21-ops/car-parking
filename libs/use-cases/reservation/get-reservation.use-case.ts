@@ -29,4 +29,9 @@ export class GetReservationUseCase {
     const reservations = this.reservations.getByParkingSpotId(parkingSpotId);
     return !reservations.some((reservation) => sameDay(reservation.date, date));
   }
+
+  getReservationOwner(parkingSpotId: string, date: Date = new Date()): string {
+    return this.reservations.getAllReservations().
+      find(reservation => reservation.spotId === parkingSpotId && sameDay(reservation.date, date))?.user || "?";
+  }  
 }

@@ -100,6 +100,10 @@ export class TestingComponent implements OnDestroy {
     return this.reservations.isParkingSpotFree(parkingSpot.id, this.date);
   }
 
+  getReservationOwner(parkingSpot: ParkingSpotEntity): string {
+    return this.reservations.getReservationOwner(parkingSpot.id);
+  }
+
   makeReservation(id: string) {
     this.reservations.addReservation(
       id, 'Adam Kowalski', new Date()
