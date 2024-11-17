@@ -1,26 +1,4 @@
 <div nz-row [nzGutter]="16" >
-  <div nz-col [nzXs]="24" [nzLg]="8">
-    <nz-card nzTitle="Kalendarz">
-      <nz-calendar
-        [nzFullscreen]="false"
-        [nzDisabledDate]="disablePastDates"
-        [nzCustomHeader]="calendarHeader"
-        (nzSelectChange)="onValueChange($event)"
-        (nzPanelChange)="onPanelChange($event)"
-      ></nz-calendar>
-      <ng-template #calendarHeader let-value let-changeMode="changeMode" let-mode="mode">
-        <div class="custom-calendar-header">
-          <button nz-button nzType="link" (click)="changeMonth(-1)">
-            &lt;
-          </button>
-          <span>{{ currentDate | date: 'MMMM yyyy' }}</span>
-          <button nz-button nzType="link" (click)="changeMonth(1)">
-            &gt;
-          </button>
-        </div>
-      </ng-template>
-    </nz-card>
-  </div>
   <div nz-col [nzXs]="24" [nzLg]="16">
     <nz-card nzTitle="Lista dostępnych miejsc">
       <nz-table [nzFrontPagination]="false" #basicTable [nzData]="parkingSpots">
