@@ -39,7 +39,6 @@ import { OnDestroy } from '@angular/core';
   styleUrl: './testing.component.scss'
 })
 export class TestingComponent implements OnDestroy {
-  title = 'Parking APP';
   parkingSpots: ParkingSpotEntity[] = [];
   reservations: GetReservationUseCase;
   parkingSpotsProvider!: ParkingSpotUseCase;
