@@ -24,8 +24,8 @@
           <span *ngIf="!isParkingSpotFree(parkingSpot)">{{ getReservationOwner(parkingSpot) }}</span>
         </td>
         <td>
-          <button nz-button nzShape="round" [nzType]="'primary'" (click)="onReservation(parkingSpot.id)">
-        <span>Zarezerwuj</span>
+          <button nz-button nzShape="round" [nzType]="'primary'" (click)="createReservationModal(parkingSpot.id)">
+            <span>Zarezerwuj</span>
           </button>
           <nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
             <ng-container *nzModalContent>
@@ -45,7 +45,8 @@
 <ng-template #modalContent>
   <div nz-row [nzGutter]="16">
     <div nz-col [nzXs]="12">
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius est ratione ut!</p>
+      <p>Podaj imie i nazwisko</p>
+      <input nz-input placeholder="Imie i nazwisko" [(ngModel)]="reservationOwner">
     </div>
     <div nz-col [nzXs]="12">
       <img class="img-responsive" src="/supra.webp" alt="">

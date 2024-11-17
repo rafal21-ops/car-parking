@@ -30,8 +30,9 @@ export class GetReservationUseCase {
     return !reservations.some((reservation) => sameDay(reservation.date, date));
   }
 
-  getReservationOwner(parkingSpotId: string, date: Date = new Date()): string {
+  getLastReservationOwner(parkingSpotId: string, date: Date = new Date()): string {
     return this.reservations.getAllReservations().
-      find(reservation => reservation.spotId === parkingSpotId && sameDay(reservation.date, date))?.user || "?";
+      filter(reservation => reservation.spotId === parkingSpotId && sameDay(reservation.date, date)).
+      sort((a, b) => a.date.getTime() - b.date.getTime()).at(-1)?.user || "?";
   }  
 }

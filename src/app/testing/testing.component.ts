@@ -55,6 +55,7 @@ export class TestingComponent implements OnDestroy {
 
   isPlatformBrowser: boolean;
   intervalId: any;
+  reservationOwner: any;
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isPlatformBrowser = isPlatformBrowser(platformId);
@@ -101,34 +102,30 @@ export class TestingComponent implements OnDestroy {
   }
 
   getReservationOwner(parkingSpot: ParkingSpotEntity): string {
-    return this.reservations.getReservationOwner(parkingSpot.id);
+    return this.reservations.getLastReservationOwner(parkingSpot.id);
   }
 
-  makeReservation(id: string) {
+  saveReservation(parkingSpotId: string) {
     this.reservations.addReservation(
-      id, 'Adam Kowalski', new Date()
+      parkingSpotId, this.reservationOwner, new Date()
     );
-
-    this.parkingSpots = this.parkingSpotsProvider.getAll();
-    console.log(this.reservations.getAll());
-    console.log(this.parkingSpots);
   }
 
-  onReservation(id: string): void {
+  createReservationModal(parkingSpotId: string): void {
     const modal: NzModalRef = this.#modalService.create({
-      nzTitle: 'Potwierdzenie rezerwacji',
+      nzTitle: 'Tworzenie rezerwacji',
       nzContent: this.modalContent,
       nzWidth: '860px',
       nzFooter: [
         {
-          label: 'Close',
+          label: 'Anuluj',
           onClick: () => modal.destroy()
         },
         {
-          label: 'Confirm',
+          label: 'Zapisz',
           type: 'primary',
           onClick: () => {
-            this.makeReservation(id);
+            this.saveReservation(parkingSpotId);
             modal.close();
           }
         }
