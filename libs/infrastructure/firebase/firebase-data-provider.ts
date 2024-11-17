@@ -40,7 +40,8 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
     const reservations = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
     getDocs(reservations).then(reservations => {
       this.reservations = reservations.docs.map(
-        doc => new ReservationEntity(doc.id, doc.get('user'), new Date(doc.get('date')), doc.get('parkingSpotId')));
+        doc => new ReservationEntity(doc.get('parkingSpotId'), doc.get('user'), new Date(doc.get('date').toDate()), doc.id)
+      );
     });
   }
 
