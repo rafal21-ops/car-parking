@@ -1,15 +1,15 @@
 import { Route } from '@angular/router';
 import { InjectionToken } from '@angular/core';
-import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
 import { ParkingSpotUseCase, ParkingSpotUseCasePort } from '../../libs/use-cases/parking-spot/parking-spot.use-case';
 import {
   GetReservationUseCase,
   GetReservationUseCasePort
 } from '../../libs/use-cases/reservation/get-reservation.use-case';
 import { TestingComponent } from './testing/testing.component';
-// import { FirebaseDataProvider } from '../../libs/infrastructure/firebase/firebase-data-provider';
+// import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
+import { FirebaseDataProvider } from '../../libs/infrastructure/firebase/firebase-data-provider';
 
-export const DbProviderToken = new InjectionToken<InMemoryDataProvider>(
+export const DbProviderToken = new InjectionToken<FirebaseDataProvider>(
   'DbProviderToken'
 );
 export const ParkingSpotUseCasePortToken = new InjectionToken<ParkingSpotUseCasePort>('ParkingSpotUseCasePortToken');
@@ -24,8 +24,8 @@ export const appRoutes: Route[] = [
       {
         provide: DbProviderToken,
         useFactory: () => {
-          return new InMemoryDataProvider();
-          // return new FirebaseDataProvider();
+          // return new InMemoryDataProvider();
+          return new FirebaseDataProvider();
         },
       },
       {
