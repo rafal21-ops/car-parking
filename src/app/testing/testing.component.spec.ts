@@ -5,6 +5,7 @@ import { DbProviderToken, ParkingSpotUseCasePortToken, ReservationsUseCasePortTo
 import { InMemoryDataProvider } from '../../../libs/infrastructure/in-memory/in-memory';
 import { ParkingSpotUseCase } from '../../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { GetReservationUseCase } from '../../../libs/use-cases/reservation/get-reservation.use-case';
+import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 
 describe('TestingComponent', () => {
   beforeEach(async () => {
@@ -31,6 +32,9 @@ describe('TestingComponent', () => {
           },
           deps: [DbProviderToken],
         },
+        {
+          provide: provideNzI18n(en_US)
+        }
       ],
     }).compileComponents();
   });
