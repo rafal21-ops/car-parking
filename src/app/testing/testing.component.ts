@@ -98,12 +98,12 @@ export class TestingComponent implements OnDestroy, OnInit {
   }
 
   getReservationOwner(parkingSpot: ParkingSpotEntity): string {
-    return this.reservations.getLastReservationOwner(parkingSpot.id, new Date());
+    return this.reservations.getLastReservationOwner(parkingSpot.id, this.date);
   }
 
   getReservationDate(parkingSpot: ParkingSpotEntity): string {
     return this.reservations
-      .getLastReservationDate(parkingSpot.id, new Date())
+      .getLastReservationDate(parkingSpot.id, this.date)
       .toLocaleDateString();
   }
 
@@ -111,7 +111,7 @@ export class TestingComponent implements OnDestroy, OnInit {
     this.reservations.addReservation(
       parkingSpotId,
       this.reservationOwner,
-      new Date()
+      this.date,
     );
   }
 
