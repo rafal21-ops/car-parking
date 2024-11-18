@@ -32,9 +32,7 @@ describe('TestingComponent', () => {
           },
           deps: [DbProviderToken],
         },
-        {
-          provide: provideNzI18n(en_US)
-        }
+        provideNzI18n(en_US),
       ],
     }).compileComponents();
   });
@@ -43,7 +41,7 @@ describe('TestingComponent', () => {
     const fixture = TestBed.createComponent(TestingComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.ant-card-head-title')?.textContent).toContain(
+    expect(compiled.querySelector('[data-test-id="card-title"]')?.textContent).toContain(
       'Lista dostępnych miejsc'
     );
   });
