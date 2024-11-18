@@ -62,11 +62,6 @@
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
-      "dependsOn": [
-        {
-          "target": "test",
-          "projects": "self"
-        }],
       "configurations": {
         "production": {
           "buildTarget": "syzygy:build:production"
@@ -76,6 +71,16 @@
         }
       },
       "defaultConfiguration": "development"
+    },
+    "serve-and-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx serve",
+          "nx test-watch"
+        ],
+        "parallel": true
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -96,6 +101,14 @@
         "jestConfig": "jest.config.ts"
       }
     },
+    "test-watch": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectName}"],
+      "options": {
+        "jestConfig": "jest.config.ts",
+        "watch": true
+      }
+    },    
     "serve-static": {
       "executor": "@nx/web:file-server",
       "options": {

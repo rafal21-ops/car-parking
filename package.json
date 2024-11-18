@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/syzygy/server/server.mjs",
-    "start-dev": "nx serve",
+    "start-dev": "nx serve-and-test",
     "build": "nx build",
     "test": "nx test",
     "prepare": "husky"
