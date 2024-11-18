@@ -1,74 +1,85 @@
-import { ChangeDetectionStrategy, Component, inject, TemplateRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ParkingSpotEntity } from '../../../libs/domain/entities/parking-spot.entity';
-import { GetReservationUseCase } from '../../../libs/use-cases/reservation/get-reservation.use-case';
-import { InMemoryDataProvider } from '../../../libs/infrastructure/in-memory/in-memory';
-import { FirebaseDataProvider } from '../../../libs/infrastructure/firebase/firebase-data-provider';
-import { ParkingSpotUseCase } from '../../../libs/use-cases/parking-spot/parking-spot.use-case';
-import { NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
-import { NzCalendarModule, NzCalendarComponent } from 'ng-zorro-antd/calendar';
-import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
 import {
-  NzModalComponent,
-  NzModalContentDirective,
-  NzModalModule,
-  NzModalRef,
-  NzModalService
-} from 'ng-zorro-antd/modal';
-import { NzOptionComponent, NzSelectComponent } from 'ng-zorro-antd/select';
+  Component,
+  inject,
+  Inject,
+  OnDestroy, OnInit,
+  PLATFORM_ID,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ParkingSpotEntity } from '../../../libs/domain/entities/parking-spot.entity';
+import {
+  GetReservationUseCasePort
+} from '../../../libs/use-cases/reservation/get-reservation.use-case';
+import {
+  ParkingSpotUseCasePort,
+} from '../../../libs/use-cases/parking-spot/parking-spot.use-case';
+import { NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
+import { NzCalendarModule } from 'ng-zorro-antd/calendar';
+import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
+import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { FormsModule } from '@angular/forms';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzColDirective, NzGridModule, NzRowDirective } from 'ng-zorro-antd/grid';
+import {
+  NzColDirective,
+  NzGridModule,
+  NzRowDirective,
+} from 'ng-zorro-antd/grid';
 import { NzCardComponent } from 'ng-zorro-antd/card';
-import { NzImageDirective } from 'ng-zorro-antd/image';
 import { NzTagComponent } from 'ng-zorro-antd/tag';
-import { isPlatformBrowser } from '@angular/common';
-import { PLATFORM_ID } from '@angular/core';
-import { Inject } from '@angular/core';
-import { OnDestroy } from '@angular/core';
-
+import { ParkingSpotUseCasePortToken, ReservationsUseCasePortToken } from '../app.routes';
 
 @Component({
   selector: 'app-testing',
   standalone: true,
-  imports: [CommonModule, NzCalendarModule, NzTableComponent,
-    NzCalendarComponent, NzButtonComponent, NzModalComponent, NzModalContentDirective,
-    NzButtonModule, NzModalModule, NzSelectComponent, NzOptionComponent, NzInputDirective, FormsModule, NzDividerModule, NzTableModule, NzRowDirective, NzColDirective, NzGridModule, NzCardComponent, NzImageDirective, NzTagComponent],
+  imports: [
+    CommonModule,
+    NzCalendarModule,
+    NzTableComponent,
+    NzButtonComponent,
+    NzButtonModule,
+    NzModalModule,
+    NzInputDirective,
+    FormsModule,
+    NzDividerModule,
+    NzTableModule,
+    NzRowDirective,
+    NzColDirective,
+    NzGridModule,
+    NzCardComponent,
+    NzTagComponent,
+  ],
   templateUrl: './testing.component.html',
-  styleUrl: './testing.component.scss'
+  styleUrl: './testing.component.scss',
 })
-export class TestingComponent implements OnDestroy {
+export class TestingComponent implements OnDestroy, OnInit {
   parkingSpots: ParkingSpotEntity[] = [];
-  reservations: GetReservationUseCase;
-  parkingSpotsProvider!: ParkingSpotUseCase;
   #modalService = inject(NzModalService);
-  modal = inject(NzModalService);
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   value?: string;
 
   date!: Date;
 
-  isVisible = false;
-
   isPlatformBrowser: boolean;
   intervalId: any;
   reservationOwner: any;
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) platformId: Object,
+    @Inject(ParkingSpotUseCasePortToken) private readonly parkingSpotsProvider : ParkingSpotUseCasePort,
+    @Inject(ReservationsUseCasePortToken) private readonly reservations : GetReservationUseCasePort,
+  ) {
     this.isPlatformBrowser = isPlatformBrowser(platformId);
-
-    const db = new FirebaseDataProvider();
-    this.parkingSpotsProvider = new ParkingSpotUseCase(db);
-    this.reservations = new GetReservationUseCase(db);
   }
 
   ngOnInit() {
     // hack the hell out of it, we can't use setInterval in SSR
     if (this.isPlatformBrowser) {
       // this is all shit, but enables us to use simple array based, non-async domain model
-      // this should be eventually changed tho :P 
+      // this should be eventually changed tho :P
       this.intervalId = setInterval(() => {
         this.parkingSpots = this.parkingSpotsProvider.getAll();
       }, 100); // and this code is slow of course because it adds <=100ms delay
@@ -87,16 +98,20 @@ export class TestingComponent implements OnDestroy {
   }
 
   getReservationOwner(parkingSpot: ParkingSpotEntity): string {
-    return this.reservations.getLastReservationOwner(parkingSpot.id);
+    return this.reservations.getLastReservationOwner(parkingSpot.id, new Date());
   }
 
   getReservationDate(parkingSpot: ParkingSpotEntity): string {
-    return this.reservations.getLastReservationDate(parkingSpot.id).toLocaleDateString();
+    return this.reservations
+      .getLastReservationDate(parkingSpot.id, new Date())
+      .toLocaleDateString();
   }
 
   saveReservation(parkingSpotId: string) {
     this.reservations.addReservation(
-      parkingSpotId, this.reservationOwner, new Date()
+      parkingSpotId,
+      this.reservationOwner,
+      new Date()
     );
   }
 
@@ -108,7 +123,7 @@ export class TestingComponent implements OnDestroy {
       nzFooter: [
         {
           label: 'Anuluj',
-          onClick: () => modal.destroy()
+          onClick: () => modal.destroy(),
         },
         {
           label: 'Zapisz',
@@ -116,9 +131,9 @@ export class TestingComponent implements OnDestroy {
           onClick: () => {
             this.saveReservation(parkingSpotId);
             modal.close();
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
   }
 }
