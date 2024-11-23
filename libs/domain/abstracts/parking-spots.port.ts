@@ -1,5 +1,5 @@
-import { ParkingSpotEntity } from '../entities/parking-spot.entity';
+import { ParkingSpot } from '../entities/parking-spot';
 
 export interface ParkingSpotsPort {
-  getAllParkingSpots(): ParkingSpotEntity[];
+  getAllParkingSpots(): ParkingSpot[];
 }

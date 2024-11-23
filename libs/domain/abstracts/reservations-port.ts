@@ -1,9 +1,9 @@
-import { ReservationEntity } from '../entities/reservation.entity';
+import { Reservation } from '../entities/reservation';
 
 export interface ReservationsPort {
-  getAllReservations(): ReservationEntity[];
-  get(id: string): ReservationEntity | null;
-  getByParkingSpotId(id: string): ReservationEntity[];
-  add(reservation: ReservationEntity): void;
-  remove(reservation: ReservationEntity): void;
+  getAllReservations(): Reservation[];
+  get(id: string): Reservation | null;
+  getByParkingSpotId(id: string): Reservation[];
+  add(reservation: Reservation): void;
+  remove(reservation: Reservation): void;
 }

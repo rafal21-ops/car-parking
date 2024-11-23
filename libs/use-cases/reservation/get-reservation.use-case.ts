@@ -1,4 +1,4 @@
-import { ReservationEntity } from '../../domain/entities/reservation.entity';
+import { Reservation } from '../../domain/entities/reservation';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,8 +11,8 @@ function sameDay(d1: Date, d2: Date) {
 }
 
 export interface GetReservationUseCasePort {
-  getById(id: string): ReservationEntity | null;
-  getAll(): ReservationEntity[];
+  getById(id: string): Reservation | null;
+  getAll(): Reservation[];
   addReservation(parkingSpotId: string, user: string, date: Date): void;
   isParkingSpotFree(parkingSpotId: string, date: Date): boolean;
   getLastReservationOwner(parkingSpotId: string, date: Date): string;
@@ -22,16 +22,16 @@ export interface GetReservationUseCasePort {
 export class GetReservationUseCase {
   constructor(private readonly reservations: ReservationsPort) {}
 
-  getById(id: string): ReservationEntity | null {
+  getById(id: string): Reservation | null {
     return this.reservations.get(id);
   }
 
-  getAll(): ReservationEntity[] {
+  getAll(): Reservation[] {
     return this.reservations.getAllReservations();
   }
 
   addReservation(parkingSpotId: string, user: string, date: Date): void {
-    const reservation = new ReservationEntity(
+    const reservation = new Reservation(
       parkingSpotId,
       user,
       date,

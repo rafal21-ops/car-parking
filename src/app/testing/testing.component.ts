@@ -8,13 +8,9 @@ import {
   ViewChild
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ParkingSpotEntity } from '../../../libs/domain/entities/parking-spot.entity';
 import {
   GetReservationUseCasePort
 } from '../../../libs/use-cases/reservation/get-reservation.use-case';
-import {
-  ParkingSpotUseCasePort,
-} from '../../../libs/use-cases/parking-spot/parking-spot.use-case';
 import { NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
@@ -29,7 +25,14 @@ import {
 } from 'ng-zorro-antd/grid';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzTagComponent } from 'ng-zorro-antd/tag';
-import { ParkingSpotUseCasePortToken, ReservationsUseCasePortToken } from '../app.routes';
+import {
+  GetAllParkingSpotsUseCasePortToken,
+  ReservationsUseCasePortToken
+} from '../app.routes';
+import {
+  GetAllParkingSpotsUseCaseType
+} from '../../../libs/use-cases/parking-spot/get-all-parking-spots.use-case';
+import { ParkingSpot } from '../../../libs/domain/entities/parking-spot';
 
 @Component({
   selector: 'app-testing',
@@ -55,7 +58,7 @@ import { ParkingSpotUseCasePortToken, ReservationsUseCasePortToken } from '../ap
   styleUrl: './testing.component.scss',
 })
 export class TestingComponent implements OnDestroy, OnInit {
-  parkingSpots: ParkingSpotEntity[] = [];
+  parkingSpots: ParkingSpot[] = [];
   #modalService = inject(NzModalService);
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
@@ -69,20 +72,20 @@ export class TestingComponent implements OnDestroy, OnInit {
 
   constructor(
     @Inject(PLATFORM_ID) platformId: Object,
-    @Inject(ParkingSpotUseCasePortToken) private readonly parkingSpotsProvider : ParkingSpotUseCasePort,
+    @Inject(GetAllParkingSpotsUseCasePortToken) private readonly getAllParkingSpots: GetAllParkingSpotsUseCaseType,
     @Inject(ReservationsUseCasePortToken) private readonly reservations : GetReservationUseCasePort,
   ) {
     this.isPlatformBrowser = isPlatformBrowser(platformId);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     // hack the hell out of it, we can't use setInterval in SSR
     if (this.isPlatformBrowser) {
       // this is all shit, but enables us to use simple array based, non-async domain model
       // this should be eventually changed tho :P
-      this.intervalId = setInterval(() => {
-        this.parkingSpots = this.parkingSpotsProvider.getAll();
-      }, 100); // and this code is slow of course because it adds <=100ms delay
+      // this.intervalId = setInterval(async () => {
+        this.parkingSpots = await this.getAllParkingSpots.execute()
+      // }, 1000); // and this code is slow of course because it adds <=100ms delay
     }
     // but works :P
   }
@@ -93,15 +96,15 @@ export class TestingComponent implements OnDestroy, OnInit {
     }
   }
 
-  isParkingSpotFree(parkingSpot: ParkingSpotEntity): boolean {
+  isParkingSpotFree(parkingSpot: ParkingSpot): boolean {
     return this.reservations.isParkingSpotFree(parkingSpot.id, this.date);
   }
 
-  getReservationOwner(parkingSpot: ParkingSpotEntity): string {
+  getReservationOwner(parkingSpot: ParkingSpot): string {
     return this.reservations.getLastReservationOwner(parkingSpot.id, this.date);
   }
 
-  getReservationDate(parkingSpot: ParkingSpotEntity): string {
+  getReservationDate(parkingSpot: ParkingSpot): string {
     return this.reservations
       .getLastReservationDate(parkingSpot.id, this.date)
       .toLocaleDateString();

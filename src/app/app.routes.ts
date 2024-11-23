@@ -1,20 +1,33 @@
 import { Route } from '@angular/router';
 import { InjectionToken } from '@angular/core';
-import { ParkingSpotUseCase, ParkingSpotUseCasePort } from '../../libs/use-cases/parking-spot/parking-spot.use-case';
 import {
   GetReservationUseCase,
-  GetReservationUseCasePort
+  GetReservationUseCasePort,
 } from '../../libs/use-cases/reservation/get-reservation.use-case';
 import { TestingComponent } from './testing/testing.component';
-// import { InMemoryDataProvider } from '../../libs/infrastructure/in-memory/in-memory';
+import {
+  InMemoryDataProvider,
+  InMemoryParkingSpotRepository,
+} from '../../libs/infrastructure/in-memory/in-memory';
 import { FirebaseDataProvider } from '../../libs/infrastructure/firebase/firebase-data-provider';
+import {
+  GetAllParkingSpotsUseCase,
+  GetAllParkingSpotsUseCaseType
+} from '../../libs/use-cases/parking-spot/get-all-parking-spots.use-case';
+import { ParkingSpotRepository } from '../../libs/domain/repositories/parking-spot.repository';
 
 export const DbProviderToken = new InjectionToken<FirebaseDataProvider>(
   'DbProviderToken'
 );
-export const ParkingSpotUseCasePortToken = new InjectionToken<ParkingSpotUseCasePort>('ParkingSpotUseCasePortToken');
-export const ReservationsUseCasePortToken = new InjectionToken<GetReservationUseCasePort>('ReservationsUseCasePortToken');
-
+export const ParkingSpotRepositoryToken = new InjectionToken<ParkingSpotRepository>(
+  'ParkingSpotRepositoryToken'
+);
+export const ReservationsUseCasePortToken =
+  new InjectionToken<GetReservationUseCasePort>('ReservationsUseCasePortToken');
+export const GetAllParkingSpotsUseCasePortToken =
+  new InjectionToken<GetAllParkingSpotsUseCaseType>(
+    'GetAllParkingSpotsUseCasePortToken'
+  );
 
 export const appRoutes: Route[] = [
   {
@@ -22,23 +35,30 @@ export const appRoutes: Route[] = [
     component: TestingComponent,
     providers: [
       {
-        provide: DbProviderToken,
+        provide: ParkingSpotRepositoryToken,
         useFactory: () => {
-          // return new InMemoryDataProvider();
-          return new FirebaseDataProvider();
+          return new InMemoryParkingSpotRepository();
         },
       },
       {
-        provide: ParkingSpotUseCasePortToken,
-        useFactory: (db: any) => {
-          return new ParkingSpotUseCase(db);
+        provide: GetAllParkingSpotsUseCasePortToken,
+        useFactory: (repository: ParkingSpotRepository) => {
+          return new GetAllParkingSpotsUseCase(repository);
         },
-        deps: [DbProviderToken],
+        deps: [ParkingSpotRepositoryToken],
+      },
+
+      {
+        provide: DbProviderToken,
+        useFactory: () => {
+          return new InMemoryDataProvider();
+          // return new FirebaseDataProvider();
+        },
       },
       {
         provide: ReservationsUseCasePortToken,
-        useFactory: (db: any) => {
-          return new GetReservationUseCase(db);
+        useFactory: (infra: any) => {
+          return new GetReservationUseCase(infra);
         },
         deps: [DbProviderToken],
       },

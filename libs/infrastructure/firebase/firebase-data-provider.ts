@@ -1,5 +1,5 @@
-import { ReservationEntity } from '../../domain/entities/reservation.entity';
-import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
+import { Reservation } from '../../domain/entities/reservation';
+import { ParkingSpot } from '../../domain/entities/parking-spot';
 import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 import { initializeApp } from 'firebase/app';
@@ -19,8 +19,8 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
   private readonly RESERVATIONS_COLLECTION_NAME: string = 'reservations';
 
   private db: Firestore;
-  private parkingSpots: ParkingSpotEntity[] = [];
-  private reservations: ReservationEntity[] = [];
+  private parkingSpots: ParkingSpot[] = [];
+  private reservations: Reservation[] = [];
 
   constructor() {
     const app = initializeApp(firebaseConfig);
@@ -32,7 +32,7 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
         snapshot.docChanges().forEach((change) => {
           if (change.type === 'added') {
             const doc = change.doc;
-            this.parkingSpots.push(new ParkingSpotEntity(doc.id, doc.get('number')));
+            this.parkingSpots.push(new ParkingSpot(doc.id, doc.get('number')));
             // reassign to trigger change detection in Angular
             // yep, this is a hack
             this.parkingSpots = [...this.parkingSpots];
@@ -52,7 +52,7 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
           if (change.type === 'added') {
             const doc = change.doc;
             this.reservations.push(
-              new ReservationEntity(doc.get('parkingSpotId'), doc.get('user'), new Date(doc.get('date').toDate()), doc.id))
+              new Reservation(doc.get('parkingSpotId'), doc.get('user'), new Date(doc.get('date').toDate()), doc.id))
           }
           if (change.type === 'modified') {
             throw new Error('Modified reservation not implemented.');
@@ -65,15 +65,15 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
     }
   }
 
-  getAllReservations(): ReservationEntity[] {
+  getAllReservations(): Reservation[] {
     return this.reservations;
   }
 
-  get(id: string): ReservationEntity | null {
+  get(id: string): Reservation | null {
     return this.reservations.find(reservation => reservation.id === id) || null;
   }
 
-  add(reservation: ReservationEntity): void {
+  add(reservation: Reservation): void {
     try {
       const reservations = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
   
@@ -87,15 +87,15 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
     }
   }
 
-  remove(reservation: ReservationEntity): void {
+  remove(reservation: Reservation): void {
     throw new Error('Method not implemented.');
   }
 
-  getAllParkingSpots(): ParkingSpotEntity[] {
+  getAllParkingSpots(): ParkingSpot[] {
     return this.parkingSpots;
   }
 
-  getByParkingSpotId(id: string): ReservationEntity[] {
+  getByParkingSpotId(id: string): Reservation[] {
     return this.reservations.filter(reservation => reservation.spotId === id);
   }
 

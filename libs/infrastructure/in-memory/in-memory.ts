@@ -1,60 +1,72 @@
-import { ReservationEntity } from '../../domain/entities/reservation.entity';
-import { ParkingSpotEntity } from '../../domain/entities/parking-spot.entity';
+import { Reservation } from '../../domain/entities/reservation';
+import { ParkingSpot } from '../../domain/entities/parking-spot';
 import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
+import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.repository';
 
-export const InMemoryReservations: ReservationEntity[] = [
-  new ReservationEntity('1', 'Adam', new Date('2024-11-16T10:00:00'), '24242'),
-  new ReservationEntity('2', 'Andrzej', new Date('2024-11-16T11:00:00'), '424242'),
-  new ReservationEntity('3', 'Anna', new Date('2024-11-16T12:00:00'), '4242'),
-  new ReservationEntity('5', 'Cezary', new Date('2024-11-16T14:00:00'), '4242'),
-  new ReservationEntity('3', 'Anna', new Date('2024-11-17T12:00:00'), '424242'),
-  new ReservationEntity('5', 'Cezary', new Date('2024-11-17T14:00:00'), '4324242'),
+export const InMemoryReservations: Reservation[] = [
+  new Reservation('1', 'Adam', new Date('2024-11-16T10:00:00'), '24242'),
+  new Reservation('2', 'Andrzej', new Date('2024-11-16T11:00:00'), '424242'),
+  new Reservation('3', 'Anna', new Date('2024-11-16T12:00:00'), '4242'),
+  new Reservation('5', 'Cezary', new Date('2024-11-16T14:00:00'), '4242'),
+  new Reservation('3', 'Anna', new Date('2024-11-17T12:00:00'), '424242'),
+  new Reservation('5', 'Cezary', new Date('2024-11-17T14:00:00'), '4324242'),
 ];
 
-export const InMemoryParkingSpots: ParkingSpotEntity[] = [
-  new ParkingSpotEntity('1', '111'),
-  new ParkingSpotEntity('2', '112'),
-  new ParkingSpotEntity('3', '113'),
-  new ParkingSpotEntity('4', '114'),
-  new ParkingSpotEntity('5', '115'),
+export const InMemoryParkingSpots: ParkingSpot[] = [
+  new ParkingSpot('1', '111'),
+  new ParkingSpot('2', '112'),
+  new ParkingSpot('3', '113'),
+  new ParkingSpot('4', '114'),
+  new ParkingSpot('5', '115'),
 ];
 
-export class InMemoryDataProvider implements ParkingSpotsPort, ReservationsPort {
-  reservations: ReservationEntity[] = InMemoryReservations;
-  parkingSpots: ParkingSpotEntity[] = InMemoryParkingSpots;
+export class InMemoryParkingSpotRepository implements ParkingSpotRepository {
+  findById(id: string): Promise<ParkingSpot | null> {
+    const partingSpot = InMemoryParkingSpots.find((s) => s.id === id) || null;
+    return Promise.resolve(partingSpot);
+  }
 
-  get(id: string): ReservationEntity | null {
+  findAll(): Promise<ParkingSpot[]> {
+    return Promise.resolve(InMemoryParkingSpots);
+  }
+}
+
+export class InMemoryDataProvider
+  implements ParkingSpotsPort, ReservationsPort
+{
+  reservations: Reservation[] = InMemoryReservations;
+  parkingSpots: ParkingSpot[] = InMemoryParkingSpots;
+
+  get(id: string): Reservation | null {
     return (
-      this.reservations.find((reservation: ReservationEntity) => {
+      this.reservations.find((reservation: Reservation) => {
         return reservation.id === id;
       }) || null
     );
   }
 
-  add(reservation: ReservationEntity): void {
+  add(reservation: Reservation): void {
     this.reservations.push(reservation);
   }
 
-  remove(reservationToRemove: ReservationEntity): void {
-    this.reservations = this.reservations.filter(
-      (reservation: ReservationEntity) => {
-        return reservation.id !== reservationToRemove.id;
-      }
-    );
+  remove(reservationToRemove: Reservation): void {
+    this.reservations = this.reservations.filter((reservation: Reservation) => {
+      return reservation.id !== reservationToRemove.id;
+    });
   }
 
-  getAllReservations(): ReservationEntity[] {
+  getAllReservations(): Reservation[] {
     return this.reservations;
   }
 
-  getAllParkingSpots(): ParkingSpotEntity[] {
+  getAllParkingSpots(): ParkingSpot[] {
     console.log('Getting parking spots from memory');
     return this.parkingSpots;
   }
 
-  getByParkingSpotId(id: string): ReservationEntity[] {
+  getByParkingSpotId(id: string): Reservation[] {
     console.log('Getting reservations from memory');
-    return this.reservations.filter(reservation => reservation.spotId === id);
+    return this.reservations.filter((reservation) => reservation.spotId === id);
   }
 }

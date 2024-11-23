@@ -1,4 +1,4 @@
-export class ParkingSpotEntity {
+export class ParkingSpot {
   id: string;
   number: string;
 
