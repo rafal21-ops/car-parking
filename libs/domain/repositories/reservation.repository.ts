@@ -5,5 +5,4 @@ export interface ReservationRepository {
   findById(id: string): Promise<Reservation | null>;
   findAll(): Promise<Reservation[]>;
   findByParkingSpotId(parkingSpotId: string): Promise<Reservation[]>;
-  delete(reservation: Reservation): Promise<void>;
 }

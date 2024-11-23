@@ -3,6 +3,7 @@ import { ParkingSpot } from '../../domain/entities/parking-spot';
 import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
 import { ReservationsPort } from '../../domain/abstracts/reservations-port';
 import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.repository';
+import { ReservationRepository } from '../../domain/repositories/reservation.repository';
 
 export const InMemoryReservations: Reservation[] = [
   new Reservation('1', 'Adam', new Date('2024-11-16T10:00:00'), '24242'),
@@ -29,6 +30,25 @@ export class InMemoryParkingSpotRepository implements ParkingSpotRepository {
 
   findAll(): Promise<ParkingSpot[]> {
     return Promise.resolve(InMemoryParkingSpots);
+  }
+}
+
+export class InMemoryReservationRepository implements ReservationRepository {
+  save(reservation: Reservation): Promise<void> {
+    InMemoryReservations.push(reservation);
+    return Promise.resolve();
+  }
+
+  findById(id: string): Promise<Reservation | null> {
+    return Promise.resolve(InMemoryReservations.find((res: Reservation) => res.id === id) || null);
+  }
+
+  findAll(): Promise<Reservation[]> {
+    return Promise.resolve(InMemoryReservations);
+  }
+
+  findByParkingSpotId(parkingSpotId: string): Promise<Reservation[]> {
+    return Promise.resolve(InMemoryReservations.filter((res: Reservation) => res.spotId === parkingSpotId));
   }
 }
 

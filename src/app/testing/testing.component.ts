@@ -26,13 +26,16 @@ import {
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzTagComponent } from 'ng-zorro-antd/tag';
 import {
-  GetAllParkingSpotsUseCasePortToken,
+  AddReservationUseCaseToken,
+  GetAllParkingSpotsUseCaseToken,
   ReservationsUseCasePortToken
 } from '../app.routes';
 import {
   GetAllParkingSpotsUseCaseType
 } from '../../../libs/use-cases/parking-spot/get-all-parking-spots.use-case';
 import { ParkingSpot } from '../../../libs/domain/entities/parking-spot';
+import { AddReservationUseCaseType } from '../../../libs/use-cases/reservation/add-reservation.use-case';
+import { Reservation } from '../../../libs/domain/entities/reservation';
 
 @Component({
   selector: 'app-testing',
@@ -72,7 +75,9 @@ export class TestingComponent implements OnDestroy, OnInit {
 
   constructor(
     @Inject(PLATFORM_ID) platformId: Object,
-    @Inject(GetAllParkingSpotsUseCasePortToken) private readonly getAllParkingSpots: GetAllParkingSpotsUseCaseType,
+    @Inject(GetAllParkingSpotsUseCaseToken) private readonly getAllParkingSpots: GetAllParkingSpotsUseCaseType,
+    @Inject(AddReservationUseCaseToken) private readonly addReservation: AddReservationUseCaseType,
+    // old
     @Inject(ReservationsUseCasePortToken) private readonly reservations : GetReservationUseCasePort,
   ) {
     this.isPlatformBrowser = isPlatformBrowser(platformId);
@@ -111,11 +116,10 @@ export class TestingComponent implements OnDestroy, OnInit {
   }
 
   saveReservation(parkingSpotId: string) {
-    this.reservations.addReservation(
-      parkingSpotId,
-      this.reservationOwner,
-      this.date,
-    );
+    // TODO: what to do with ids?
+    const reservation = new Reservation(parkingSpotId, this.reservationOwner, this.date, '1234');
+
+    this.addReservation.execute(reservation);
   }
 
   createReservationModal(parkingSpotId: string): void {
