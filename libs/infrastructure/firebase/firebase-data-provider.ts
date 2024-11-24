@@ -14,6 +14,7 @@ const firebaseConfig = {
   appId: "1:572317372334:web:9aff6cde163246b2c9823f"
 };
 
+// TODO: przepisać -> ma implementować ParkingSpotRepository i ReservationRepository
 export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort {
   private readonly PARKING_SPOTS_COLLECTION_NAME: string = 'parkingSpots';
   private readonly RESERVATIONS_COLLECTION_NAME: string = 'reservations';

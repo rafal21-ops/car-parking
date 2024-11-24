@@ -1,16 +1,10 @@
 import { Route } from '@angular/router';
 import { InjectionToken } from '@angular/core';
-import {
-  GetReservationUseCase,
-  GetReservationUseCasePort,
-} from '../../libs/use-cases/reservation/get-reservation.use-case';
 import { TestingComponent } from './testing/testing.component';
 import {
-  InMemoryDataProvider,
   InMemoryParkingSpotRepository,
   InMemoryReservationRepository,
 } from '../../libs/infrastructure/in-memory/in-memory';
-import { FirebaseDataProvider } from '../../libs/infrastructure/firebase/firebase-data-provider';
 import {
   GetAllParkingSpotsUseCase,
   GetAllParkingSpotsUseCaseType,
@@ -21,6 +15,9 @@ import {
   AddReservationUseCase,
   AddReservationUseCaseType
 } from '../../libs/use-cases/reservation/add-reservation.use-case';
+import {
+  GetReservationByParkingSpotIdAndDateUseCaseType, GetReservationsByParkingSpotIdAndDateUseCase
+} from '../../libs/use-cases/reservation/get-reservations-by-parking-spot-id-and-date-use.case';
 
 export const ParkingSpotRepositoryToken =
   new InjectionToken<ParkingSpotRepository>('ParkingSpotRepositoryToken');
@@ -33,19 +30,14 @@ export const GetAllParkingSpotsUseCaseToken =
   );
 export const AddReservationUseCaseToken =
   new InjectionToken<AddReservationUseCaseType>('AddReservationUseCaseToken');
-
-// old
-export const DbProviderToken = new InjectionToken<FirebaseDataProvider>(
-  'DbProviderToken'
-);
-export const ReservationsUseCasePortToken =
-  new InjectionToken<GetReservationUseCasePort>('ReservationsUseCasePortToken');
+export const GetReservationByParkingSpotIdAndDateUseCaseToken = new InjectionToken<GetReservationByParkingSpotIdAndDateUseCaseType>('GetReservationByParkingSpotIdAndDateUseCaseToken');
 
 export const appRoutes: Route[] = [
   {
     path: '',
     component: TestingComponent,
     providers: [
+      // repositories
       {
         provide: ParkingSpotRepositoryToken,
         useFactory: () => {
@@ -59,6 +51,7 @@ export const appRoutes: Route[] = [
         },
       },
 
+      // use-cases
       {
         provide: GetAllParkingSpotsUseCaseToken,
         useFactory: (repository: ParkingSpotRepository) => {
@@ -73,21 +66,12 @@ export const appRoutes: Route[] = [
         },
         deps: [ReservationRepositoryToken],
       },
-
-      // old
       {
-        provide: DbProviderToken,
-        useFactory: () => {
-          return new InMemoryDataProvider();
-          // return new FirebaseDataProvider();
+        provide: GetReservationByParkingSpotIdAndDateUseCaseToken,
+        useFactory: (repository: ReservationRepository) => {
+          return new GetReservationsByParkingSpotIdAndDateUseCase(repository);
         },
-      },
-      {
-        provide: ReservationsUseCasePortToken,
-        useFactory: (infra: any) => {
-          return new GetReservationUseCase(infra);
-        },
-        deps: [DbProviderToken],
+        deps: [ReservationRepositoryToken],
       },
     ],
   },

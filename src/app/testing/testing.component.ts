@@ -1,16 +1,5 @@
-import {
-  Component,
-  inject,
-  Inject,
-  OnDestroy, OnInit,
-  PLATFORM_ID,
-  TemplateRef,
-  ViewChild
-} from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-  GetReservationUseCasePort
-} from '../../../libs/use-cases/reservation/get-reservation.use-case';
+import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
@@ -25,17 +14,11 @@ import {
 } from 'ng-zorro-antd/grid';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzTagComponent } from 'ng-zorro-antd/tag';
-import {
-  AddReservationUseCaseToken,
-  GetAllParkingSpotsUseCaseToken,
-  ReservationsUseCasePortToken
-} from '../app.routes';
-import {
-  GetAllParkingSpotsUseCaseType
-} from '../../../libs/use-cases/parking-spot/get-all-parking-spots.use-case';
 import { ParkingSpot } from '../../../libs/domain/entities/parking-spot';
-import { AddReservationUseCaseType } from '../../../libs/use-cases/reservation/add-reservation.use-case';
 import { Reservation } from '../../../libs/domain/entities/reservation';
+import { ParkingSpotService } from '../services/parking-spots.service';
+import { ReservationsService } from '../services/reservations.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-testing',
@@ -59,67 +42,36 @@ import { Reservation } from '../../../libs/domain/entities/reservation';
   ],
   templateUrl: './testing.component.html',
   styleUrl: './testing.component.scss',
+  providers: [ParkingSpotService, ReservationsService],
 })
-export class TestingComponent implements OnDestroy, OnInit {
-  parkingSpots: ParkingSpot[] = [];
+export class TestingComponent {
+  private readonly parkingSpotService = inject(ParkingSpotService);
+  private readonly reservationsService = inject(ReservationsService);
+
+  parkingSpots$: Observable<ParkingSpot[]> = this.parkingSpotService.getAll$();
+  date: Date = new Date();
+  reservationOwner = '';
+
   #modalService = inject(NzModalService);
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
-  value?: string;
-
-  date!: Date;
-
-  isPlatformBrowser: boolean;
-  intervalId: any;
-  reservationOwner: any;
-
-  constructor(
-    @Inject(PLATFORM_ID) platformId: Object,
-    @Inject(GetAllParkingSpotsUseCaseToken) private readonly getAllParkingSpots: GetAllParkingSpotsUseCaseType,
-    @Inject(AddReservationUseCaseToken) private readonly addReservation: AddReservationUseCaseType,
-    // old
-    @Inject(ReservationsUseCasePortToken) private readonly reservations : GetReservationUseCasePort,
-  ) {
-    this.isPlatformBrowser = isPlatformBrowser(platformId);
+  getReservations$(parkingSpot: ParkingSpot): Observable<Reservation[]> {
+    return this.reservationsService.getReservationsByIdAndDate(
+      parkingSpot.id,
+      this.date
+    );
   }
 
-  async ngOnInit() {
-    // hack the hell out of it, we can't use setInterval in SSR
-    if (this.isPlatformBrowser) {
-      // this is all shit, but enables us to use simple array based, non-async domain model
-      // this should be eventually changed tho :P
-      // this.intervalId = setInterval(async () => {
-        this.parkingSpots = await this.getAllParkingSpots.execute()
-      // }, 1000); // and this code is slow of course because it adds <=100ms delay
-    }
-    // but works :P
-  }
-
-  ngOnDestroy() {
-    if (this.isPlatformBrowser) {
-      clearInterval(this.intervalId);
-    }
-  }
-
-  isParkingSpotFree(parkingSpot: ParkingSpot): boolean {
-    return this.reservations.isParkingSpotFree(parkingSpot.id, this.date);
-  }
-
-  getReservationOwner(parkingSpot: ParkingSpot): string {
-    return this.reservations.getLastReservationOwner(parkingSpot.id, this.date);
-  }
-
-  getReservationDate(parkingSpot: ParkingSpot): string {
-    return this.reservations
-      .getLastReservationDate(parkingSpot.id, this.date)
-      .toLocaleDateString();
+  isParkingSpotFree$(parkingSpot: ParkingSpot): Observable<boolean> {
+    return this.parkingSpotService.isSpotFree$(parkingSpot, this.date);
   }
 
   saveReservation(parkingSpotId: string) {
-    // TODO: what to do with ids?
-    const reservation = new Reservation(parkingSpotId, this.reservationOwner, this.date, '1234');
-
-    this.addReservation.execute(reservation);
+    this.reservationsService.addReservation(
+      parkingSpotId,
+      this.reservationOwner,
+      this.date
+    );
   }
 
   createReservationModal(parkingSpotId: string): void {
@@ -144,13 +96,8 @@ export class TestingComponent implements OnDestroy, OnInit {
     });
   }
 
-  onValueChange(value: Date): void {
+  onDateChange(value: Date): void {
     this.date = value;
-  }
-
-  onPanelChange(change: { date: Date; mode: string }): void {
-    console.log(`Current value: ${change.date}`);
-    console.log(`Current mode: ${change.mode}`);
   }
 
   disablePastDates = (current: Date): boolean => {
@@ -159,11 +106,13 @@ export class TestingComponent implements OnDestroy, OnInit {
     return current < today;
   };
 
+
+  // TODO: naprawić, bo nie działa przełączanie kalendarza
   currentDate: Date = new Date();
 
   changeMonth(offset: number): void {
     const newDate = new Date(this.currentDate);
     newDate.setMonth(this.currentDate.getMonth() + offset);
     this.currentDate = newDate;
-  }  
+  }
 }

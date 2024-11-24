@@ -1,62 +1,79 @@
-<div nz-row [nzGutter]="16" >
+<div nz-row [nzGutter]="16">
   <div nz-col [nzXs]="24" [nzLg]="8">
     <nz-card nzTitle="Kalendarz">
       <nz-calendar
         [nzFullscreen]="false"
         [nzDisabledDate]="disablePastDates"
         [nzCustomHeader]="calendarHeader"
-        (nzSelectChange)="onValueChange($event)"
-        (nzPanelChange)="onPanelChange($event)"
+        (nzSelectChange)="onDateChange($event)"
       ></nz-calendar>
-      <ng-template #calendarHeader let-value let-changeMode="changeMode" let-mode="mode">
+      <ng-template
+        #calendarHeader
+        let-value
+        let-changeMode="changeMode"
+        let-mode="mode"
+      >
         <div class="custom-calendar-header">
           <button nz-button nzType="link" (click)="changeMonth(-1)">
             &lt;
           </button>
-          <span>{{ currentDate | date: 'MMMM yyyy' }}</span>
-          <button nz-button nzType="link" (click)="changeMonth(1)">
-            &gt;
-          </button>
+          <span>{{ currentDate | date : 'MMMM yyyy' }}</span>
+          <button nz-button nzType="link" (click)="changeMonth(1)">&gt;</button>
         </div>
       </ng-template>
     </nz-card>
   </div>
+
   <div nz-col [nzXs]="24" [nzLg]="16">
     <nz-card data-test-id="card-title" nzTitle="Lista dostępnych miejsc">
-      <nz-table [nzFrontPagination]="false" #basicTable [nzData]="parkingSpots">
-      <thead>
-      <tr>
-        <th>Numer miejsca</th>
-        <th>Status</th>
-        <th>Zarezerwowane przez</th>
-        <th>Data rezerwacji</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let parkingSpot of basicTable.data">
-        <td>{{ parkingSpot.number }}</td>
-        <td>
-          @if (isParkingSpotFree(parkingSpot)) {
-            <nz-tag [nzColor]="'green'">Wolne</nz-tag>
-          } @else {
-            <nz-tag [nzColor]="'red'">Zajęte</nz-tag>
+      <nz-table
+        [nzFrontPagination]="false"
+        #basicTable
+        [nzData]="(parkingSpots$ | async) || []"
+      >
+        <thead>
+          <tr>
+            <th>Numer miejsca</th>
+            <th>Status</th>
+            <th>Zarezerwowane przez</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(parkingSpot of basicTable.data; track parkingSpot.number) {
+          <tr>
+            <td>{{ parkingSpot.number }} {{ parkingSpot.id }}</td>
+            <td>
+              @if (isParkingSpotFree$(parkingSpot) | async) {
+              <nz-tag [nzColor]="'green'">Wolne</nz-tag>
+              } @else {
+              <nz-tag [nzColor]="'red'">Zajęte</nz-tag>
+              }
+            </td>
+            <td>
+              @if (!(isParkingSpotFree$(parkingSpot) | async)) {
+              <span>
+                @for (res of getReservations$(parkingSpot) | async; track
+                res.id) {
+                {{ res.user }}
+                }</span
+              >
+              }
+            </td>
+            <td>
+              <button
+                nz-button
+                nzShape="round"
+                [nzType]="'primary'"
+                (click)="createReservationModal(parkingSpot.id)"
+              >
+                <span>Zarezerwuj</span>
+              </button>
+            </td>
+          </tr>
           }
-        </td>
-        <td>
-          <span *ngIf="!isParkingSpotFree(parkingSpot)">{{ getReservationOwner(parkingSpot) }}</span>
-        </td>
-        <td>
-          <span *ngIf="!isParkingSpotFree(parkingSpot)">{{ getReservationDate(parkingSpot) }}</span>
-        </td>
-        <td>
-          <button nz-button nzShape="round" [nzType]="'primary'" (click)="createReservationModal(parkingSpot.id)">
-            <span>Zarezerwuj</span>
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </nz-table>
+        </tbody>
+      </nz-table>
     </nz-card>
   </div>
 </div>
@@ -65,11 +82,14 @@
   <div nz-row [nzGutter]="16">
     <div nz-col [nzXs]="12">
       <p>Podaj imie i nazwisko</p>
-      <input nz-input placeholder="Imie i nazwisko" [(ngModel)]="reservationOwner">
+      <input
+        nz-input
+        placeholder="Imie i nazwisko"
+        [(ngModel)]="reservationOwner"
+      />
     </div>
     <div nz-col [nzXs]="12">
-      <img class="img-responsive" src="/supra.webp" alt="">
+      <img class="img-responsive" src="/supra.webp" alt="" />
     </div>
   </div>
 </ng-template>
-
