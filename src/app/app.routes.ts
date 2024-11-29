@@ -5,6 +5,7 @@ import {
   InMemoryParkingSpotRepository,
   InMemoryReservationRepository,
 } from '../../libs/infrastructure/in-memory/in-memory';
+import { FirebaseParkingSpotRepository, FirebaseReservationRepository } from '../../libs/infrastructure/firebase/firebase-repositories';
 import {
   GetAllParkingSpotsUseCase,
   GetAllParkingSpotsUseCaseType,
@@ -32,11 +33,7 @@ export const AddReservationUseCaseToken =
   new InjectionToken<AddReservationUseCaseType>('AddReservationUseCaseToken');
 export const GetReservationByParkingSpotIdAndDateUseCaseToken = new InjectionToken<GetReservationByParkingSpotIdAndDateUseCaseType>('GetReservationByParkingSpotIdAndDateUseCaseToken');
 
-const repositoryType = 'IN_MEMORY';
-
-// const parkingSpotRepositoryFactory: Function = ;
-
-// const reservationRepositoryFactory: Function = ;
+const repositoryType: String = 'FIREBASE';
 
 export const appRoutes: Route[] = [
   {
@@ -50,6 +47,8 @@ export const appRoutes: Route[] = [
           switch (repositoryType) {
             case 'IN_MEMORY':
             return new InMemoryParkingSpotRepository();
+            case 'FIREBASE':
+            return new FirebaseParkingSpotRepository();
             default:
             return new InMemoryParkingSpotRepository();
           }
@@ -61,6 +60,8 @@ export const appRoutes: Route[] = [
           switch (repositoryType) {
             case 'IN_MEMORY':
             return new InMemoryReservationRepository();
+            case 'FIREBASE':
+            return new FirebaseReservationRepository();
             default:
             return new InMemoryReservationRepository();
           }

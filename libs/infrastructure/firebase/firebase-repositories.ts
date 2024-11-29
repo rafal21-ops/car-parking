@@ -1,7 +1,7 @@
 import { Reservation } from '../../domain/entities/reservation';
 import { ParkingSpot } from '../../domain/entities/parking-spot';
-import { ParkingSpotsPort } from '../../domain/abstracts/parking-spots.port';
-import { ReservationsPort } from '../../domain/abstracts/reservations-port';
+import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.repository';
+import { ReservationRepository } from '../../domain/repositories/reservation.repository';
 import { initializeApp } from 'firebase/app';
 import { Firestore, getFirestore, collection, getDocs, addDoc, CollectionReference, DocumentData, onSnapshot } from 'firebase/firestore';
 
@@ -14,15 +14,12 @@ const firebaseConfig = {
   appId: "1:572317372334:web:9aff6cde163246b2c9823f"
 };
 
-// TODO: przepisać -> ma implementować ParkingSpotRepository i ReservationRepository
-export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort {
+export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
   private readonly PARKING_SPOTS_COLLECTION_NAME: string = 'parkingSpots';
-  private readonly RESERVATIONS_COLLECTION_NAME: string = 'reservations';
-
+  
   private db: Firestore;
   private parkingSpots: ParkingSpot[] = [];
-  private reservations: Reservation[] = [];
-
+  
   constructor() {
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
@@ -46,7 +43,34 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
           }
         });
       });
+    }
+  }
+  
+  findById(id: string): ParkingSpot | null {
+    return this.findAll().find((s) => s.id === id) || null;
+  }
 
+  findAll(): ParkingSpot[] {
+    return this.parkingSpots;
+  }
+
+  private isSSR(): boolean {
+    return typeof window === 'undefined';
+  }
+}
+
+// TODO: przepisać -> ma implementować ParkingSpotRepository i ReservationRepository
+export class FirebaseReservationRepository implements ReservationRepository {
+  private readonly RESERVATIONS_COLLECTION_NAME: string = 'reservations';
+
+  private db: Firestore;
+  private reservations: Reservation[] = [];
+
+  constructor() {
+    const app = initializeApp(firebaseConfig);
+    this.db = getFirestore(app);
+    
+    if (!this.isSSR()) {
       const reservationsCollection = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
       onSnapshot(reservationsCollection, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
@@ -66,15 +90,7 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
     }
   }
 
-  getAllReservations(): Reservation[] {
-    return this.reservations;
-  }
-
-  get(id: string): Reservation | null {
-    return this.reservations.find(reservation => reservation.id === id) || null;
-  }
-
-  add(reservation: Reservation): void {
+  save(reservation: Reservation): void {
     try {
       const reservations = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
   
@@ -88,19 +104,35 @@ export class FirebaseDataProvider implements ParkingSpotsPort, ReservationsPort 
     }
   }
 
-  remove(reservation: Reservation): void {
-    throw new Error('Method not implemented.');
+  findById(id: string): Reservation | null {
+    return this.reservations.find(reservation => reservation.id === id) || null;
   }
 
-  getAllParkingSpots(): ParkingSpot[] {
-    return this.parkingSpots;
+  findAll(): Reservation[] {
+    return this.reservations;
   }
 
-  getByParkingSpotId(id: string): Reservation[] {
-    return this.reservations.filter(reservation => reservation.spotId === id);
+  findByParkingSpotId(parkingSpotId: string): Reservation[] {
+    return this.reservations.filter(reservation => reservation.spotId === parkingSpotId);
+  }
+
+  findByParkingSpotIdAndDate(parkingSpotId: string, date: Date): Reservation[] {
+    return this.reservations.filter(
+      (reservation: Reservation) =>
+        reservation.spotId === parkingSpotId && this.sameDay(reservation.date, date)
+    );
   }
 
   private isSSR(): boolean {
     return typeof window === 'undefined';
   }
+
+  private sameDay(d1: Date, d2: Date): boolean {
+    return (
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
+    );
+  }
+  
 }
