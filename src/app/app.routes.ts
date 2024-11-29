@@ -32,6 +32,12 @@ export const AddReservationUseCaseToken =
   new InjectionToken<AddReservationUseCaseType>('AddReservationUseCaseToken');
 export const GetReservationByParkingSpotIdAndDateUseCaseToken = new InjectionToken<GetReservationByParkingSpotIdAndDateUseCaseType>('GetReservationByParkingSpotIdAndDateUseCaseToken');
 
+const repositoryType = 'IN_MEMORY';
+
+// const parkingSpotRepositoryFactory: Function = ;
+
+// const reservationRepositoryFactory: Function = ;
+
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -41,13 +47,23 @@ export const appRoutes: Route[] = [
       {
         provide: ParkingSpotRepositoryToken,
         useFactory: () => {
-          return new InMemoryParkingSpotRepository();
+          switch (repositoryType) {
+            case 'IN_MEMORY':
+            return new InMemoryParkingSpotRepository();
+            default:
+            return new InMemoryParkingSpotRepository();
+          }
         },
       },
       {
         provide: ReservationRepositoryToken,
         useFactory: () => {
-          return new InMemoryReservationRepository();
+          switch (repositoryType) {
+            case 'IN_MEMORY':
+            return new InMemoryReservationRepository();
+            default:
+            return new InMemoryReservationRepository();
+          }
         },
       },
 
