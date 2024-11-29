@@ -1,6 +1,6 @@
 import { ParkingSpot } from './parking-spot';
 
-describe('ParkingSpotEntity', () => {
+describe('ParkingSpot', () => {
   it('should create an instance with given id and number', () => {
     const id = '1';
     const number = '142';
