@@ -55,6 +55,12 @@ export class TestingComponent {
   #modalService = inject(NzModalService);
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
+  constructor() {
+    this.parkingSpots$.subscribe(parkingSpots => {
+      console.log('Parking spots changed:', parkingSpots);
+    });
+  }
+
   getReservations$(parkingSpot: ParkingSpot): Observable<Reservation[]> {
     return this.reservationsService.getReservationsByIdAndDate(
       parkingSpot.id,

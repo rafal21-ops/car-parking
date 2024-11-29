@@ -31,7 +31,7 @@ export class ReservationsService {
   ): Observable<any> {
     return this.reservationEvent.pipe(
       shareReplay(),
-      tap(() => console.log('event')),
+      // tap(() => console.log('event')),
       switchMap(() => {
         return of(this.getReservationsUseCase.execute(parkingSpotId, date));
       })

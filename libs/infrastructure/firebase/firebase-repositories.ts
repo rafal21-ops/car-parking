@@ -3,7 +3,8 @@ import { ParkingSpot } from '../../domain/entities/parking-spot';
 import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.repository';
 import { ReservationRepository } from '../../domain/repositories/reservation.repository';
 import { initializeApp } from 'firebase/app';
-import { Firestore, getFirestore, collection, getDocs, addDoc, CollectionReference, DocumentData, onSnapshot } from 'firebase/firestore';
+import { Firestore, getFirestore, collection, addDoc, onSnapshot } from 'firebase/firestore';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGaPJCpOVkvalcAcGLZoMimZOVgTGnwBM",
@@ -19,6 +20,8 @@ export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
   
   private db: Firestore;
   private parkingSpots: ParkingSpot[] = [];
+
+  private parkingSpotsSubject: BehaviorSubject<ParkingSpot[]> = new BehaviorSubject<ParkingSpot[]>([]);
   
   constructor() {
     const app = initializeApp(firebaseConfig);
@@ -31,9 +34,7 @@ export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
           if (change.type === 'added') {
             const doc = change.doc;
             this.parkingSpots.push(new ParkingSpot(doc.id, doc.get('number')));
-            // reassign to trigger change detection in Angular
-            // yep, this is a hack
-            this.parkingSpots = [...this.parkingSpots];
+            this.parkingSpotsSubject.next(this.parkingSpots);
           }
           if (change.type === 'modified') {
             throw new Error('Modified parking spot not implemented.');
@@ -52,6 +53,10 @@ export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
 
   findAll(): ParkingSpot[] {
     return this.parkingSpots;
+  }
+
+  findAll$(): Observable<ParkingSpot[]> {
+    return this.parkingSpotsSubject.asObservable();
   }
 
   private isSSR(): boolean {

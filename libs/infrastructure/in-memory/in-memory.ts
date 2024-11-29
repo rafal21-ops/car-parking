@@ -2,6 +2,7 @@ import { Reservation } from '../../domain/entities/reservation';
 import { ParkingSpot } from '../../domain/entities/parking-spot';
 import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.repository';
 import { ReservationRepository } from '../../domain/repositories/reservation.repository';
+import { Observable, of } from 'rxjs';
 
 function sameDay(d1: Date, d2: Date) {
   return (
@@ -35,6 +36,10 @@ export class InMemoryParkingSpotRepository implements ParkingSpotRepository {
 
   findAll(): ParkingSpot[] {
     return InMemoryParkingSpots;
+  }
+
+  findAll$(): Observable<ParkingSpot[]> {
+    return of(InMemoryParkingSpots);
   }
 }
 
