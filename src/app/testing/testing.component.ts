@@ -109,6 +109,6 @@ export class TestingComponent {
   changeMonth(offset: number): void {
     const newDate = new Date(this.date);
     newDate.setMonth(this.date.getMonth() + offset);
-    this.date = this.isDateInThePast(newDate) ? newDate : new Date();
+    this.date = this.isDateInThePast(newDate) ? new Date() : newDate;
   }
 }
