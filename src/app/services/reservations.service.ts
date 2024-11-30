@@ -11,6 +11,7 @@ import {
   of,
   shareReplay,
   switchMap,
+  tap,
 } from 'rxjs';
 import { Reservation } from '../../../libs/domain/entities/reservation';
 
@@ -40,6 +41,10 @@ export class ReservationsService {
   ): Observable<Reservation[]> {
     return this.reservationEvent.pipe(
       shareReplay(),
+      // tap(() => {
+      //   // TODO: wykonuje sie za duzo razy
+      //   console.log('tap');
+      // }),
       switchMap(() => {
         return of(this.getReservationsUseCase.execute(parkingSpotId, date));
       })

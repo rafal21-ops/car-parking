@@ -3,7 +3,10 @@ import { TestingComponent } from './testing.component';
 import { RouterModule } from '@angular/router';
 import {
   AddReservationUseCaseToken,
-  GetAllParkingSpotsUseCaseToken, GetReservationByParkingSpotIdAndDateUseCaseToken, OnUpdateReservationUseCaseToken,
+  EventBusToken,
+  GetAllParkingSpotsUseCaseToken,
+  GetReservationByParkingSpotIdAndDateUseCaseToken, OnUpdateParkingSpotUseCaseToken,
+  OnUpdateReservationUseCaseToken,
   ParkingSpotRepositoryToken,
   ReservationRepositoryToken
 } from 'app/app.routes';
@@ -18,10 +21,11 @@ import { ReservationRepository } from '../../../libs/domain/repositories/reserva
 import { AddReservationUseCase } from '../../../libs/use-cases/reservation/add-reservation.use-case';
 import { ReservationsService } from '../services/reservations.service';
 import { ParkingSpotService } from '../services/parking-spots.service';
-import {
-  GetReservationsByParkingSpotIdAndDateUseCase
-} from '../../../libs/use-cases/reservation/get-reservations-by-parking-spot-id-and-date-use.case';
+import { GetReservationsByParkingSpotIdAndDateUseCase } from '../../../libs/use-cases/reservation/get-reservations-by-parking-spot-id-and-date-use.case';
 import { OnUpdateReservationUseCase } from '../../../libs/use-cases/reservation/on-update-reservation.use-case';
+import { EventBus } from '../../../libs/infrastructure/event-bus/event-bus';
+import { EventBusType } from '../../../libs/domain/events/event-bus';
+import { OnUpdateParkingSpotUseCase } from '../../../libs/use-cases/parking-spot/on-update-parking-spot.use-case';
 
 describe('TestingComponent', () => {
   beforeEach(async () => {
@@ -29,16 +33,24 @@ describe('TestingComponent', () => {
       imports: [TestingComponent, RouterModule.forRoot([])],
       providers: [
         {
-          provide: ParkingSpotRepositoryToken,
+          provide: EventBusToken,
           useFactory: () => {
-            return new InMemoryParkingSpotRepository();
+            return new EventBus();
           },
         },
         {
-          provide: ReservationRepositoryToken,
-          useFactory: () => {
-            return new InMemoryReservationRepository();
+          provide: ParkingSpotRepositoryToken,
+          useFactory: (eventBus: EventBusType) => {
+            return new InMemoryParkingSpotRepository(eventBus);
           },
+          deps: [EventBusToken],
+        },
+        {
+          provide: ReservationRepositoryToken,
+          useFactory: (eventBus: EventBusType) => {
+            return new InMemoryReservationRepository(eventBus);
+          },
+          deps: [EventBusToken],
         },
 
         {
@@ -64,11 +76,19 @@ describe('TestingComponent', () => {
         },
         {
           provide: OnUpdateReservationUseCaseToken,
-          useFactory: (repository: ReservationRepository) => {
-            return new OnUpdateReservationUseCase(repository);
+          useFactory: (eventBus: EventBusType) => {
+            return new OnUpdateReservationUseCase(eventBus);
           },
-          deps: [ReservationRepositoryToken],
+          deps: [EventBusToken],
         },
+        {
+          provide: OnUpdateParkingSpotUseCaseToken,
+          useFactory: (eventBus: EventBusType) => {
+            return new OnUpdateParkingSpotUseCase(eventBus);
+          },
+          deps: [EventBusToken],
+        },
+
         {
           provide: ReservationsService,
         },

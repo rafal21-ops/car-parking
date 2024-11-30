@@ -1,16 +1,17 @@
-import { ReservationRepository } from '../../domain/repositories/reservation.repository';
+import { EventBusType } from '../../domain/events/event-bus';
+import { ReservationListUpdatedEvent } from '../../domain/events/ReservationListUpdatedEvent';
 
 export interface OnUpdateReservationUseCaseType {
   execute(callback: () => void): void;
 }
 
 export class OnUpdateReservationUseCase implements OnUpdateReservationUseCaseType {
-  constructor(private readonly reservations: ReservationRepository) {
+  constructor(
+    private readonly eventBus: EventBusType
+  ) {
   }
 
   execute(callback: () => void): void {
-    this.reservations.findAll$().subscribe(() => {
-      callback();
-    })
+    this.eventBus.subscribe(ReservationListUpdatedEvent.name, callback);
   }
 }

@@ -5,7 +5,10 @@ import {
   InMemoryParkingSpotRepository,
   InMemoryReservationRepository,
 } from '../../libs/infrastructure/in-memory/in-memory';
-import { FirebaseParkingSpotRepository, FirebaseReservationRepository } from '../../libs/infrastructure/firebase/firebase-repositories';
+import {
+  FirebaseParkingSpotRepository,
+  FirebaseReservationRepository,
+} from '../../libs/infrastructure/firebase/firebase-repositories';
 import {
   GetAllParkingSpotsUseCase,
   GetAllParkingSpotsUseCaseType,
@@ -14,16 +17,24 @@ import { ParkingSpotRepository } from '../../libs/domain/repositories/parking-sp
 import { ReservationRepository } from '../../libs/domain/repositories/reservation.repository';
 import {
   AddReservationUseCase,
-  AddReservationUseCaseType
+  AddReservationUseCaseType,
 } from '../../libs/use-cases/reservation/add-reservation.use-case';
 import {
-  GetReservationByParkingSpotIdAndDateUseCaseType, GetReservationsByParkingSpotIdAndDateUseCase
+  GetReservationByParkingSpotIdAndDateUseCaseType,
+  GetReservationsByParkingSpotIdAndDateUseCase,
 } from '../../libs/use-cases/reservation/get-reservations-by-parking-spot-id-and-date-use.case';
 import {
   OnUpdateReservationUseCase,
-  OnUpdateReservationUseCaseType
+  OnUpdateReservationUseCaseType,
 } from '../../libs/use-cases/reservation/on-update-reservation.use-case';
+import { EventBusType } from '../../libs/domain/events/event-bus';
+import { EventBus } from '../../libs/infrastructure/event-bus/event-bus';
+import {
+  OnUpdateParkingSpotUseCase,
+  OnUpdateParkingSpotUseCaseType
+} from '../../libs/use-cases/parking-spot/on-update-parking-spot.use-case';
 
+export const EventBusToken = new InjectionToken<EventBusType>('EventBusToken');
 export const ParkingSpotRepositoryToken =
   new InjectionToken<ParkingSpotRepository>('ParkingSpotRepositoryToken');
 export const ReservationRepositoryToken =
@@ -35,8 +46,18 @@ export const GetAllParkingSpotsUseCaseToken =
   );
 export const AddReservationUseCaseToken =
   new InjectionToken<AddReservationUseCaseType>('AddReservationUseCaseToken');
-export const GetReservationByParkingSpotIdAndDateUseCaseToken = new InjectionToken<GetReservationByParkingSpotIdAndDateUseCaseType>('GetReservationByParkingSpotIdAndDateUseCaseToken');
-export const OnUpdateReservationUseCaseToken = new InjectionToken<OnUpdateReservationUseCaseType>('OnUpdateReservationUseCaseToken')
+export const GetReservationByParkingSpotIdAndDateUseCaseToken =
+  new InjectionToken<GetReservationByParkingSpotIdAndDateUseCaseType>(
+    'GetReservationByParkingSpotIdAndDateUseCaseToken'
+  );
+export const OnUpdateReservationUseCaseToken =
+  new InjectionToken<OnUpdateReservationUseCaseType>(
+    'OnUpdateReservationUseCaseToken'
+  );
+export const OnUpdateParkingSpotUseCaseToken =
+  new InjectionToken<OnUpdateParkingSpotUseCaseType>(
+    'OnUpdateParkingSpotUseCaseToken'
+  );
 
 const repositoryType: string = 'FIREBASE';
 
@@ -47,28 +68,36 @@ export const appRoutes: Route[] = [
     providers: [
       // repositories
       {
-        provide: ParkingSpotRepositoryToken,
+        provide: EventBusToken,
         useFactory: () => {
-          switch (repositoryType) {
-            case 'FIREBASE':
-            return new FirebaseParkingSpotRepository();
-            case 'IN_MEMORY':
-            default:
-            return new InMemoryParkingSpotRepository();
-          }
+          return new EventBus();
         },
       },
       {
-        provide: ReservationRepositoryToken,
-        useFactory: () => {
+        provide: ParkingSpotRepositoryToken,
+        useFactory: (eventBus: EventBusType) => {
           switch (repositoryType) {
             case 'FIREBASE':
-            return new FirebaseReservationRepository();
+              return new FirebaseParkingSpotRepository(eventBus);
             case 'IN_MEMORY':
             default:
-            return new InMemoryReservationRepository();
+              return new InMemoryParkingSpotRepository(eventBus);
           }
         },
+        deps: [EventBusToken],
+      },
+      {
+        provide: ReservationRepositoryToken,
+        useFactory: (eventBus: EventBusType) => {
+          switch (repositoryType) {
+            case 'FIREBASE':
+              return new FirebaseReservationRepository(eventBus);
+            case 'IN_MEMORY':
+            default:
+              return new InMemoryReservationRepository(eventBus);
+          }
+        },
+        deps: [EventBusToken],
       },
 
       // use-cases
@@ -95,11 +124,18 @@ export const appRoutes: Route[] = [
       },
       {
         provide: OnUpdateReservationUseCaseToken,
-        useFactory: (repository: ReservationRepository) => {
-          return new OnUpdateReservationUseCase(repository);
+        useFactory: (eventBus: EventBusType) => {
+          return new OnUpdateReservationUseCase(eventBus);
         },
-        deps: [ReservationRepositoryToken],
-      }
+        deps: [EventBusToken],
+      },
+      {
+        provide: OnUpdateParkingSpotUseCaseToken,
+        useFactory: (eventBus: EventBusType) => {
+          return new OnUpdateParkingSpotUseCase(eventBus);
+        },
+        deps: [EventBusToken],
+      },
     ],
   },
 ];

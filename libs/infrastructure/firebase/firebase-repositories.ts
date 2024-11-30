@@ -4,7 +4,9 @@ import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.re
 import { ReservationRepository } from '../../domain/repositories/reservation.repository';
 import { initializeApp } from 'firebase/app';
 import { Firestore, getFirestore, collection, addDoc, onSnapshot } from 'firebase/firestore';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { EventBusType } from '../../domain/events/event-bus';
+import { ReservationListUpdatedEvent } from '../../domain/events/ReservationListUpdatedEvent';
+import { ParkingSpotListUpdatedEvent } from '../../domain/events/ParkingSpotListUpdatedEvent';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGaPJCpOVkvalcAcGLZoMimZOVgTGnwBM",
@@ -21,12 +23,10 @@ export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
   private db: Firestore;
   private parkingSpots: ParkingSpot[] = [];
 
-  private parkingSpotsSubject: BehaviorSubject<ParkingSpot[]> = new BehaviorSubject<ParkingSpot[]>([]);
-  
-  constructor() {
+  constructor(private readonly eventBus: EventBusType) {
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
-    
+
     if (!this.isSSR()) {
       const parkingSpotsCollection = collection(this.db, this.PARKING_SPOTS_COLLECTION_NAME);
       onSnapshot(parkingSpotsCollection, (snapshot) => {
@@ -34,7 +34,8 @@ export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
           if (change.type === 'added') {
             const doc = change.doc;
             this.parkingSpots.push(new ParkingSpot(doc.id, doc.get('number')));
-            this.parkingSpotsSubject.next(this.parkingSpots);
+
+            this.eventBus.publish(new ParkingSpotListUpdatedEvent());
           }
           if (change.type === 'modified') {
             throw new Error('Modified parking spot not implemented.');
@@ -52,11 +53,8 @@ export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
   }
 
   findAll(): ParkingSpot[] {
-    return this.parkingSpots;
-  }
-
-  findAll$(): Observable<ParkingSpot[]> {
-    return this.parkingSpotsSubject.asObservable();
+    // https://ng.ant.design/components/table/en#note
+    return [...this.parkingSpots];
   }
 
   private isSSR(): boolean {
@@ -70,9 +68,7 @@ export class FirebaseReservationRepository implements ReservationRepository {
   private db: Firestore;
   private reservations: Reservation[] = [];
 
-  private reservationsSource: BehaviorSubject<Reservation[]> = new BehaviorSubject<Reservation[]>([]);
-
-  constructor() {
+  constructor(private readonly eventBus: EventBusType) {
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
 
@@ -94,7 +90,7 @@ export class FirebaseReservationRepository implements ReservationRepository {
               )
             );
 
-            this.reservationsSource.next(this.reservations);
+            this.eventBus.publish(new ReservationListUpdatedEvent());
           }
           if (change.type === 'modified') {
             throw new Error('Modified reservation not implemented.');
@@ -105,10 +101,6 @@ export class FirebaseReservationRepository implements ReservationRepository {
         });
       });
     }
-  }
-
-  findAll$(): Observable<Reservation[]> {
-    return this.reservationsSource.asObservable();
   }
 
   save(reservation: Reservation): void {

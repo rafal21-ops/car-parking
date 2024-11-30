@@ -2,7 +2,9 @@ import { Reservation } from '../../domain/entities/reservation';
 import { ParkingSpot } from '../../domain/entities/parking-spot';
 import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.repository';
 import { ReservationRepository } from '../../domain/repositories/reservation.repository';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { EventBusType } from '../../domain/events/event-bus';
+import { ReservationListUpdatedEvent } from '../../domain/events/ReservationListUpdatedEvent';
+import { ParkingSpotListUpdatedEvent } from '../../domain/events/ParkingSpotListUpdatedEvent';
 
 function sameDay(d1: Date, d2: Date) {
   return (
@@ -13,12 +15,12 @@ function sameDay(d1: Date, d2: Date) {
 }
 
 export const InMemoryReservations: Reservation[] = [
-  new Reservation('1', 'Adam', new Date('2024-11-16T10:00:00'), '24242'),
-  new Reservation('2', 'Andrzej', new Date('2024-11-16T11:00:00'), '424242'),
-  new Reservation('3', 'Anna', new Date('2024-11-16T12:00:00'), '4242'),
-  new Reservation('5', 'Cezary', new Date('2024-11-16T14:00:00'), '4242'),
-  new Reservation('3', 'Anna', new Date('2024-11-17T12:00:00'), '424242'),
-  new Reservation('5', 'Cezary', new Date('2024-11-17T14:00:00'), '4324242'),
+  new Reservation('1', 'Adam', new Date(), '24242'),
+  new Reservation('2', 'Andrzej', new Date(), '424242'),
+  new Reservation('3', 'Anna', new Date(), '4242'),
+  new Reservation('5', 'Cezary', new Date(), '4242'),
+  new Reservation('5', 'Anna', new Date(), '424242'),
+  new Reservation('3', 'Cezary', new Date(), '4324242'),
 ];
 
 export const InMemoryParkingSpots: ParkingSpot[] = [
@@ -30,6 +32,10 @@ export const InMemoryParkingSpots: ParkingSpot[] = [
 ];
 
 export class InMemoryParkingSpotRepository implements ParkingSpotRepository {
+  constructor(private readonly eventBus: EventBusType) {
+    this.eventBus.publish(new ParkingSpotListUpdatedEvent());
+  }
+
   findById(id: string): ParkingSpot | null {
     return InMemoryParkingSpots.find((s) => s.id === id) || null;
   }
@@ -37,18 +43,14 @@ export class InMemoryParkingSpotRepository implements ParkingSpotRepository {
   findAll(): ParkingSpot[] {
     return InMemoryParkingSpots;
   }
-
-  findAll$(): Observable<ParkingSpot[]> {
-    return of(InMemoryParkingSpots);
-  }
 }
 
 export class InMemoryReservationRepository implements ReservationRepository {
-  reservationsSource: BehaviorSubject<Reservation[]> = new BehaviorSubject(InMemoryReservations);
+  constructor(private readonly eventBus: EventBusType) {}
 
   save(reservation: Reservation): void {
     InMemoryReservations.push(reservation);
-    this.reservationsSource.next(InMemoryReservations);
+    this.eventBus.publish(new ReservationListUpdatedEvent());
   }
 
   findById(id: string): Reservation | null {
@@ -59,10 +61,6 @@ export class InMemoryReservationRepository implements ReservationRepository {
 
   findAll(): Reservation[] {
     return InMemoryReservations;
-  }
-
-  findAll$(): Observable<Reservation[]> {
-    return this.reservationsSource.asObservable();
   }
 
   findByParkingSpotId(parkingSpotId: string): Reservation[] {
