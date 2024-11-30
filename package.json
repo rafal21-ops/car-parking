@@ -13,7 +13,7 @@
     "test": "nx test",
     "build-and-test-all": "nx run-many -t lint test build e2e",
     "build-and-test-affected-all": "nx affected -t lint test build e2e",
-    "e2e": "nx e2e:e2e",
+    "e2e": "nx run-many -t e2e",
     "prepare": "husky"
   },
   "private": true,
