@@ -1,6 +1,9 @@
 {
   "name": "@syzygy/source",
-  "version": "0.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "start": "node dist/syzygy/server/server.mjs",
@@ -46,10 +49,10 @@
     "@nx/eslint-plugin": "20.1.2",
     "@nx/jest": "20.1.2",
     "@nx/js": "20.1.2",
-    "@nx/playwright": "20.1.2",
+    "@nx/playwright": "~20.1.2",
     "@nx/web": "20.1.2",
     "@nx/workspace": "20.1.2",
-    "@playwright/test": "^1.36.0",
+    "@playwright/test": "~1.49.0",
     "@schematics/angular": "~18.2.0",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
