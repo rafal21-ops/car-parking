@@ -6,6 +6,7 @@
     "start": "node dist/syzygy/server/server.mjs",
     "start-dev": "nx serve-and-test",
     "build": "nx build",
+    "lint": "nx lint",
     "test": "nx test",
     "prepare": "husky"
   },
