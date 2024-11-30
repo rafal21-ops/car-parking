@@ -1,15 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { TestingComponent } from './testing.component';
+import { MainComponent } from './main.component';
 import { RouterModule } from '@angular/router';
-import {
-  AddReservationUseCaseToken,
-  EventBusToken,
-  GetAllParkingSpotsUseCaseToken,
-  GetReservationByParkingSpotIdAndDateUseCaseToken, OnUpdateParkingSpotUseCaseToken,
-  OnUpdateReservationUseCaseToken,
-  ParkingSpotRepositoryToken,
-  ReservationRepositoryToken
-} from 'app/app.routes';
 import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 import { ParkingSpotRepository } from '../../../libs/domain/repositories/parking-spot.repository';
 import { GetAllParkingSpotsUseCase } from '../../../libs/use-cases/parking-spot/get-all-parking-spots.use-case';
@@ -26,11 +17,21 @@ import { OnUpdateReservationUseCase } from '../../../libs/use-cases/reservation/
 import { EventBus } from '../../../libs/infrastructure/event-bus/event-bus';
 import { EventBusType } from '../../../libs/domain/events/event-bus';
 import { OnUpdateParkingSpotUseCase } from '../../../libs/use-cases/parking-spot/on-update-parking-spot.use-case';
+import {
+  AddReservationUseCaseToken,
+  EventBusToken,
+  GetAllParkingSpotsUseCaseToken,
+  GetReservationByParkingSpotIdAndDateUseCaseToken,
+  OnUpdateParkingSpotUseCaseToken,
+  OnUpdateReservationUseCaseToken,
+  ParkingSpotRepositoryToken,
+  ReservationRepositoryToken
+} from '../tokens/tokens';
 
 describe('TestingComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TestingComponent, RouterModule.forRoot([])],
+      imports: [MainComponent, RouterModule.forRoot([])],
       providers: [
         {
           provide: EventBusToken,
@@ -101,7 +102,7 @@ describe('TestingComponent', () => {
   });
 
   it('should render title', () => {
-    const fixture = TestBed.createComponent(TestingComponent);
+    const fixture = TestBed.createComponent(MainComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(

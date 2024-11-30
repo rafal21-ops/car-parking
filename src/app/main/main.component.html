@@ -32,13 +32,13 @@
             <th>Numer miejsca</th>
             <th>Status</th>
             <th>Zarezerwowane przez</th>
-            <th>Actions</th>
+            <th>Akcje</th>
           </tr>
         </thead>
         <tbody>
           @for(parkingSpot of basicTable.data; track parkingSpot.number) {
           <tr>
-            <td>{{ parkingSpot.number }} {{ parkingSpot.id }}</td>
+            <td>{{ parkingSpot.number }}</td>
             <td>
               @if (isParkingSpotFree$(parkingSpot) | async) {
               <nz-tag [nzColor]="'green'">Wolne</nz-tag>

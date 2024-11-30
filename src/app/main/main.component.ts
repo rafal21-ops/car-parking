@@ -40,11 +40,11 @@ import { Observable } from 'rxjs';
     NzCardComponent,
     NzTagComponent,
   ],
-  templateUrl: './testing.component.html',
-  styleUrl: './testing.component.scss',
+  templateUrl: './main.component.html',
+  styleUrl: './main.component.scss',
   providers: [ParkingSpotService, ReservationsService],
 })
-export class TestingComponent {
+export class MainComponent {
   private readonly parkingSpotService = inject(ParkingSpotService);
   private readonly reservationsService = inject(ReservationsService);
 

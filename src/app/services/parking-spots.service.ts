@@ -1,13 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { ParkingSpot } from '../../../libs/domain/entities/parking-spot';
 import { BehaviorSubject, EMPTY, map, Observable, of, switchMap } from 'rxjs';
-import {
-  GetAllParkingSpotsUseCaseToken,
-  OnUpdateParkingSpotUseCaseToken,
-} from '../app.routes';
 import { Reservation } from '../../../libs/domain/entities/reservation';
 import { ReservationsService } from './reservations.service';
 import { GetAllParkingSpotsUseCaseType } from '../../../libs/use-cases/parking-spot/get-all-parking-spots.use-case';
+import { GetAllParkingSpotsUseCaseToken, OnUpdateParkingSpotUseCaseToken } from '../tokens/tokens';
 
 @Injectable()
 export class ParkingSpotService {

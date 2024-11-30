@@ -7,8 +7,6 @@ import { NzAvatarComponent } from 'ng-zorro-antd/avatar';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzIconDirective } from 'ng-zorro-antd/icon';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NgForOf } from '@angular/common';
-import { NzTableComponent } from 'ng-zorro-antd/table';
 
 export interface UserInformation {
   userName: string;
@@ -30,8 +28,6 @@ export interface UserInformation {
     NzButtonComponent,
     NzIconDirective,
     NzIconModule,
-    NzTableComponent,
-    NgForOf
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',

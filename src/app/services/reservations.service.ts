@@ -1,10 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  AddReservationUseCaseToken,
-  GetReservationByParkingSpotIdAndDateUseCaseToken,
-  OnUpdateReservationUseCaseToken,
-} from '../app.routes';
-import {
   BehaviorSubject,
   EMPTY,
   Observable,
@@ -14,6 +9,11 @@ import {
   tap,
 } from 'rxjs';
 import { Reservation } from '../../../libs/domain/entities/reservation';
+import {
+  AddReservationUseCaseToken,
+  GetReservationByParkingSpotIdAndDateUseCaseToken,
+  OnUpdateReservationUseCaseToken
+} from '../tokens/tokens';
 
 @Injectable()
 export class ReservationsService {
