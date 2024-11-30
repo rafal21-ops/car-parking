@@ -100,7 +100,7 @@ export class TestingComponent {
     this.date = value;
   }
 
-  disablePastDates = (current: Date): boolean => {
+  isDateInThePast = (current: Date): boolean => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return current < today;
@@ -109,6 +109,6 @@ export class TestingComponent {
   changeMonth(offset: number): void {
     const newDate = new Date(this.date);
     newDate.setMonth(this.date.getMonth() + offset);
-    this.date = newDate;
+    this.date = this.isDateInThePast(newDate) ? newDate : new Date();
   }
 }

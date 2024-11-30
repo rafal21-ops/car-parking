@@ -106,6 +106,6 @@ describe('TestingComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(
       compiled.querySelector('[data-test-id="card-title"]')?.textContent
-    ).toContain('Lista dostępnych miejsc');
+    ).toContain('Lista miejsc');
   });
 });
