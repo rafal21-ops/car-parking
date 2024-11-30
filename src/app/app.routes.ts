@@ -1,4 +1,4 @@
-import { environment } from 'environments/environment';
+import { environment } from '../environments/environment';
 import { Route } from '@angular/router';
 import { MainComponent } from './main/main.component';
 import {
