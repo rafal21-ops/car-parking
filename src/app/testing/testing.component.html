@@ -2,22 +2,18 @@
   <div nz-col [nzXs]="24" [nzLg]="8">
     <nz-card nzTitle="Kalendarz">
       <nz-calendar
+        [(ngModel)]="date"
         [nzFullscreen]="false"
         [nzDisabledDate]="disablePastDates"
         [nzCustomHeader]="calendarHeader"
         (nzSelectChange)="onDateChange($event)"
       ></nz-calendar>
-      <ng-template
-        #calendarHeader
-        let-value
-        let-changeMode="changeMode"
-        let-mode="mode"
-      >
+      <ng-template #calendarHeader>
         <div class="custom-calendar-header">
           <button nz-button nzType="link" (click)="changeMonth(-1)">
             &lt;
           </button>
-          <span>{{ currentDate | date : 'MMMM yyyy' }}</span>
+          <span>{{ date | date : 'MMMM yyyy' }}</span>
           <button nz-button nzType="link" (click)="changeMonth(1)">&gt;</button>
         </div>
       </ng-template>

@@ -106,13 +106,9 @@ export class TestingComponent {
     return current < today;
   };
 
-
-  // TODO: naprawić, bo nie działa przełączanie kalendarza
-  currentDate: Date = new Date();
-
   changeMonth(offset: number): void {
-    const newDate = new Date(this.currentDate);
-    newDate.setMonth(this.currentDate.getMonth() + offset);
-    this.currentDate = newDate;
+    const newDate = new Date(this.date);
+    newDate.setMonth(this.date.getMonth() + offset);
+    this.date = newDate;
   }
 }
