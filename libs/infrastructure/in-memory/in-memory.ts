@@ -24,7 +24,7 @@ export const InMemoryReservations: Reservation[] = [
 ];
 
 export const InMemoryParkingSpots: ParkingSpot[] = [
-  new ParkingSpot('1', '111'),
+  new ParkingSpot('1', '142'),
   new ParkingSpot('2', '112'),
   new ParkingSpot('3', '113'),
   new ParkingSpot('4', '114'),

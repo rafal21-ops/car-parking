@@ -3,34 +3,32 @@ import { nxE2EPreset } from '@nx/playwright/preset';
 
 import { workspaceRoot } from '@nx/devkit';
 
-// For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
+const isProduction = process.env.NODE_ENV === 'production';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+const webServerDevelopment = {
+  command: 'npm run start-dev',
+  url: 'http://localhost:4200',
+  reuseExistingServer: true,
+  cwd: workspaceRoot,
+}
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
+const webServerProduction = {
+  command: 'npm run start',
+  url: 'http://localhost:4000',
+  reuseExistingServer: false,
+  cwd: workspaceRoot,
+}
+
+const baseURL = isProduction ? webServerProduction.url : webServerDevelopment.url;
+
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
   timeout: 10000,
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npx nx run syzygy:serve',
-    url: 'http://localhost:4200',
-    reuseExistingServer: !process.env.CI,
-    cwd: workspaceRoot,
-  },
+  webServer: isProduction ? webServerProduction : webServerDevelopment,
   projects: [
     {
       name: 'chromium',
