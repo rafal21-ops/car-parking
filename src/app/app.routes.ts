@@ -34,7 +34,7 @@ enum RepositoryType {
 }
 
 function getRepositoryType(): RepositoryType {
-  return RepositoryType.IN_MEMORY;
+  return RepositoryType.FIREBASE;
 }
 
 export const appRoutes: Route[] = [
