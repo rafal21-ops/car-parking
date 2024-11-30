@@ -1,3 +1,4 @@
+import { environment } from 'environments/environment';
 import { Route } from '@angular/router';
 import { MainComponent } from './main/main.component';
 import {
@@ -34,7 +35,18 @@ enum RepositoryType {
 }
 
 function getRepositoryType(): RepositoryType {
-  return RepositoryType.FIREBASE;
+  let repostoryType: RepositoryType = RepositoryType.IN_MEMORY;
+  
+  switch(environment.repositoryType) {
+    case 'in_memory':
+      repostoryType = RepositoryType.IN_MEMORY;
+      break;
+    case 'firebase':
+      repostoryType = RepositoryType.FIREBASE;
+      break;
+  }
+
+  return repostoryType;
 }
 
 export const appRoutes: Route[] = [

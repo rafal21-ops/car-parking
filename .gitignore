@@ -45,3 +45,6 @@ Thumbs.db
 
 # Tests
 /test-results
+
+# enviroment.ts
+src/environments/environment.development.ts
