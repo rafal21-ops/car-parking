@@ -1,1 +1,1 @@
-npx nx affected -t lint test build e2e
+npm run build-and-test-affected-all
