@@ -51,7 +51,7 @@
               }
             </td>
             <td>
-              @if (!(isParkingSpotFree$(parkingSpot) | async)) {
+              @if ((isParkingSpotFree$(parkingSpot) | async) === false) {
               <span>
                 @for (res of getReservations$(parkingSpot) | async; track
                 res.id) {

@@ -12,6 +12,7 @@ import {
   shareReplay,
   switchMap,
 } from 'rxjs';
+import { Reservation } from '../../../libs/domain/entities/reservation';
 
 @Injectable()
 export class ReservationsService {
@@ -36,7 +37,7 @@ export class ReservationsService {
   getReservationsByIdAndDate(
     parkingSpotId: string,
     date: Date = new Date()
-  ): Observable<any> {
+  ): Observable<Reservation[]> {
     return this.reservationEvent.pipe(
       shareReplay(),
       switchMap(() => {

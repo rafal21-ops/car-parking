@@ -38,7 +38,7 @@ export const AddReservationUseCaseToken =
 export const GetReservationByParkingSpotIdAndDateUseCaseToken = new InjectionToken<GetReservationByParkingSpotIdAndDateUseCaseType>('GetReservationByParkingSpotIdAndDateUseCaseToken');
 export const OnUpdateReservationUseCaseToken = new InjectionToken<OnUpdateReservationUseCaseType>('OnUpdateReservationUseCaseToken')
 
-const repositoryType: String = 'FIREBASE';
+const repositoryType: string = 'FIREBASE';
 
 export const appRoutes: Route[] = [
   {

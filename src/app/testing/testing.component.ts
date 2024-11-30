@@ -1,5 +1,5 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { NzTableComponent, NzTableModule } from 'ng-zorro-antd/table';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
@@ -53,10 +53,10 @@ export class TestingComponent {
   reservationOwner = '';
 
   #modalService = inject(NzModalService);
-  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
+  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<null>;
 
   constructor() {
-    this.parkingSpots$.subscribe(parkingSpots => {
+    this.parkingSpots$.subscribe(parkingSpots => {4
       console.log('Parking spots changed:', parkingSpots);
     });
   }
