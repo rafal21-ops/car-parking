@@ -19,6 +19,10 @@ import {
 import {
   GetReservationByParkingSpotIdAndDateUseCaseType, GetReservationsByParkingSpotIdAndDateUseCase
 } from '../../libs/use-cases/reservation/get-reservations-by-parking-spot-id-and-date-use.case';
+import {
+  OnUpdateReservationUseCase,
+  OnUpdateReservationUseCaseType
+} from '../../libs/use-cases/reservation/on-update-reservation.use-case';
 
 export const ParkingSpotRepositoryToken =
   new InjectionToken<ParkingSpotRepository>('ParkingSpotRepositoryToken');
@@ -32,6 +36,7 @@ export const GetAllParkingSpotsUseCaseToken =
 export const AddReservationUseCaseToken =
   new InjectionToken<AddReservationUseCaseType>('AddReservationUseCaseToken');
 export const GetReservationByParkingSpotIdAndDateUseCaseToken = new InjectionToken<GetReservationByParkingSpotIdAndDateUseCaseType>('GetReservationByParkingSpotIdAndDateUseCaseToken');
+export const OnUpdateReservationUseCaseToken = new InjectionToken<OnUpdateReservationUseCaseType>('OnUpdateReservationUseCaseToken')
 
 const repositoryType: String = 'FIREBASE';
 
@@ -45,10 +50,9 @@ export const appRoutes: Route[] = [
         provide: ParkingSpotRepositoryToken,
         useFactory: () => {
           switch (repositoryType) {
-            case 'IN_MEMORY':
-            return new InMemoryParkingSpotRepository();
             case 'FIREBASE':
             return new FirebaseParkingSpotRepository();
+            case 'IN_MEMORY':
             default:
             return new InMemoryParkingSpotRepository();
           }
@@ -58,10 +62,9 @@ export const appRoutes: Route[] = [
         provide: ReservationRepositoryToken,
         useFactory: () => {
           switch (repositoryType) {
-            case 'IN_MEMORY':
-            return new InMemoryReservationRepository();
             case 'FIREBASE':
             return new FirebaseReservationRepository();
+            case 'IN_MEMORY':
             default:
             return new InMemoryReservationRepository();
           }
@@ -90,6 +93,13 @@ export const appRoutes: Route[] = [
         },
         deps: [ReservationRepositoryToken],
       },
+      {
+        provide: OnUpdateReservationUseCaseToken,
+        useFactory: (repository: ReservationRepository) => {
+          return new OnUpdateReservationUseCase(repository);
+        },
+        deps: [ReservationRepositoryToken],
+      }
     ],
   },
 ];

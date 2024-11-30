@@ -64,25 +64,37 @@ export class FirebaseParkingSpotRepository implements ParkingSpotRepository {
   }
 }
 
-// TODO: przepisać -> ma implementować ParkingSpotRepository i ReservationRepository
 export class FirebaseReservationRepository implements ReservationRepository {
   private readonly RESERVATIONS_COLLECTION_NAME: string = 'reservations';
 
   private db: Firestore;
   private reservations: Reservation[] = [];
 
+  private reservationsSource: BehaviorSubject<Reservation[]> = new BehaviorSubject<Reservation[]>([]);
+
   constructor() {
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
-    
+
     if (!this.isSSR()) {
-      const reservationsCollection = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
+      const reservationsCollection = collection(
+        this.db,
+        this.RESERVATIONS_COLLECTION_NAME
+      );
       onSnapshot(reservationsCollection, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
           if (change.type === 'added') {
             const doc = change.doc;
             this.reservations.push(
-              new Reservation(doc.get('parkingSpotId'), doc.get('user'), new Date(doc.get('date').toDate()), doc.id))
+              new Reservation(
+                doc.get('parkingSpotId'),
+                doc.get('user'),
+                new Date(doc.get('date').toDate()),
+                doc.id
+              )
+            );
+
+            this.reservationsSource.next(this.reservations);
           }
           if (change.type === 'modified') {
             throw new Error('Modified reservation not implemented.');
@@ -95,14 +107,21 @@ export class FirebaseReservationRepository implements ReservationRepository {
     }
   }
 
+  findAll$(): Observable<Reservation[]> {
+    return this.reservationsSource.asObservable();
+  }
+
   save(reservation: Reservation): void {
     try {
-      const reservations = collection(this.db, this.RESERVATIONS_COLLECTION_NAME);
-  
+      const reservations = collection(
+        this.db,
+        this.RESERVATIONS_COLLECTION_NAME
+      );
+
       addDoc(reservations, {
         user: reservation.user,
         date: reservation.date,
-        parkingSpotId: reservation.spotId
+        parkingSpotId: reservation.spotId,
       });
     } catch (error) {
       console.error('Error adding document:', error);
@@ -110,7 +129,9 @@ export class FirebaseReservationRepository implements ReservationRepository {
   }
 
   findById(id: string): Reservation | null {
-    return this.reservations.find(reservation => reservation.id === id) || null;
+    return (
+      this.reservations.find((reservation) => reservation.id === id) || null
+    );
   }
 
   findAll(): Reservation[] {
@@ -118,13 +139,16 @@ export class FirebaseReservationRepository implements ReservationRepository {
   }
 
   findByParkingSpotId(parkingSpotId: string): Reservation[] {
-    return this.reservations.filter(reservation => reservation.spotId === parkingSpotId);
+    return this.reservations.filter(
+      (reservation) => reservation.spotId === parkingSpotId
+    );
   }
 
   findByParkingSpotIdAndDate(parkingSpotId: string, date: Date): Reservation[] {
     return this.reservations.filter(
       (reservation: Reservation) =>
-        reservation.spotId === parkingSpotId && this.sameDay(reservation.date, date)
+        reservation.spotId === parkingSpotId &&
+        this.sameDay(reservation.date, date)
     );
   }
 
@@ -139,5 +163,4 @@ export class FirebaseReservationRepository implements ReservationRepository {
       d1.getDate() === d2.getDate()
     );
   }
-  
 }

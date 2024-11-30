@@ -2,7 +2,7 @@ import { Reservation } from '../../domain/entities/reservation';
 import { ParkingSpot } from '../../domain/entities/parking-spot';
 import { ParkingSpotRepository } from '../../domain/repositories/parking-spot.repository';
 import { ReservationRepository } from '../../domain/repositories/reservation.repository';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 function sameDay(d1: Date, d2: Date) {
   return (
@@ -44,8 +44,11 @@ export class InMemoryParkingSpotRepository implements ParkingSpotRepository {
 }
 
 export class InMemoryReservationRepository implements ReservationRepository {
+  reservationsSource: BehaviorSubject<Reservation[]> = new BehaviorSubject(InMemoryReservations);
+
   save(reservation: Reservation): void {
     InMemoryReservations.push(reservation);
+    this.reservationsSource.next(InMemoryReservations);
   }
 
   findById(id: string): Reservation | null {
@@ -56,6 +59,10 @@ export class InMemoryReservationRepository implements ReservationRepository {
 
   findAll(): Reservation[] {
     return InMemoryReservations;
+  }
+
+  findAll$(): Observable<Reservation[]> {
+    return this.reservationsSource.asObservable();
   }
 
   findByParkingSpotId(parkingSpotId: string): Reservation[] {

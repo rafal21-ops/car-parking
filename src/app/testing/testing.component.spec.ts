@@ -3,7 +3,7 @@ import { TestingComponent } from './testing.component';
 import { RouterModule } from '@angular/router';
 import {
   AddReservationUseCaseToken,
-  GetAllParkingSpotsUseCaseToken, GetReservationByParkingSpotIdAndDateUseCaseToken,
+  GetAllParkingSpotsUseCaseToken, GetReservationByParkingSpotIdAndDateUseCaseToken, OnUpdateReservationUseCaseToken,
   ParkingSpotRepositoryToken,
   ReservationRepositoryToken
 } from 'app/app.routes';
@@ -21,6 +21,7 @@ import { ParkingSpotService } from '../services/parking-spots.service';
 import {
   GetReservationsByParkingSpotIdAndDateUseCase
 } from '../../../libs/use-cases/reservation/get-reservations-by-parking-spot-id-and-date-use.case';
+import { OnUpdateReservationUseCase } from '../../../libs/use-cases/reservation/on-update-reservation.use-case';
 
 describe('TestingComponent', () => {
   beforeEach(async () => {
@@ -58,6 +59,13 @@ describe('TestingComponent', () => {
           provide: AddReservationUseCaseToken,
           useFactory: (repository: ReservationRepository) => {
             return new AddReservationUseCase(repository);
+          },
+          deps: [ReservationRepositoryToken],
+        },
+        {
+          provide: OnUpdateReservationUseCaseToken,
+          useFactory: (repository: ReservationRepository) => {
+            return new OnUpdateReservationUseCase(repository);
           },
           deps: [ReservationRepositoryToken],
         },
