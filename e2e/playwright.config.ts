@@ -6,16 +6,16 @@ import { workspaceRoot } from '@nx/devkit';
 const isProduction = process.env.NODE_ENV === 'production';
 
 const webServerDevelopment = {
-  command: 'npm run start-dev',
+  command: 'npm run start:dev',
   url: 'http://localhost:4200',
   reuseExistingServer: true,
   cwd: workspaceRoot,
 }
 
 const webServerProduction = {
-  command: 'npm run start',
-  url: 'http://localhost:4000',
-  reuseExistingServer: false,
+  command: 'npm run start:dev',
+  url: 'http://localhost:4200',
+  reuseExistingServer: true,
   cwd: workspaceRoot,
 }
 
