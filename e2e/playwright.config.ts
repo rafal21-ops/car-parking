@@ -13,8 +13,8 @@ const webServerDevelopment = {
 }
 
 const webServerProduction = {
-  command: 'npm run start:dev',
-  url: 'http://localhost:4200',
+  command: 'npm run start:prod',
+  url: 'http://localhost:4000',
   reuseExistingServer: true,
   cwd: workspaceRoot,
 }
