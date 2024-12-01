@@ -15,7 +15,7 @@
     "build:prod": "nx run syzygy:build:production",
     "lint": "nx run-many -t lint",
     "test-unit": "nx run syzygy:test",
-    "test-e2e": "nx run e2e:e2e",
+    "test-e2e": "nx run e2e:e2e:test",
     "build-and-test": "npm run build-and-test:test",
     "build-and-test:test": "nx run-many -t lint test build e2e --configuration=test",
     "prepare": "husky"
