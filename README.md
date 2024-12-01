@@ -21,7 +21,7 @@ npx playwright install
 ```
 
 ## npm scripts
-First of all, naming convention for scripts is `target:[configuration]`, where `configuration` is one of `production`, `development` or `test`. If `configuration` is ommited then `production` is used. Also some targets don't have all configurations if it doesn't make sens.
+First of all, naming convention for scripts is `target:[configuration]`, where `configuration` is one of `production`, `development` or `test`. If `configuration` is ommited then `production` is used. Also some targets don't have all configurations if it doesn't make sense.
 
 Most useful ones are listed below. For more check `package.json`.
 
