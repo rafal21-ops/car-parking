@@ -37,10 +37,16 @@ npm run start:dev
 npm run build
 ```
 
+### Run unit tests
+
+```sh
+npm run test-unit
+```
+
 ### Run e2e tests
 
 ```sh
-npm run e2e
+npm run test-e2e
 ```
 
 ### Run everything: lint, unit tests, build and e2e tests (also used by CI)
