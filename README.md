@@ -2,6 +2,11 @@
 
 ## Initial project configuration
 
+### Requirements
+* node 20+
+* npm
+* npx (or nx installed globally)
+
 ### Configure enviroment variables
 Create `src/enviroments/environment.development.ts` file yourself or use provided example:
 ```sh
