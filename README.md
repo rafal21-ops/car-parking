@@ -15,27 +15,30 @@ npm install
 npx playwright install
 ```
 
-## Development
+## npm scripts
+First of all, naming convention for scripts is `target:[configuration]`, where `configuration` is one of `production`, `development` or `test`. If `configuration` is ommited then `production` is used. Also some targets don't have all configurations if it doesn't make sens.
 
-To run the dev server use:
+Most useful ones are listed below. For more check `package.json`.
+
+### Run the dev server
 
 ```sh
 npm run start:dev
 ```
 
-To create a production bundle use:
+### Create a production bundle
 
 ```sh
 npm run build
 ```
 
-To run e2e tests run:
+### Run e2e tests
 
 ```sh
 npm run e2e
 ```
 
-To lint, test & build for CI purposed use:
+### Run everything: lint, unit tests, build and e2e tests (also used by CI)
 
 ```sh
 npm run build-and-test
