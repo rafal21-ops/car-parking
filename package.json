@@ -15,10 +15,10 @@
     "lint": "nx lint",
     "test": "nx test",
     "e2e": "npm run e2e:prod",
-    "e2e:dev": "NODE_ENV=development nx run-many -t e2e --configuration=development",
-    "e2e:prod": "NODE_ENV=production nx run-many -t e2e --configuration=production",
+    "e2e:dev": "nx run-many -t e2e --configuration=development",
+    "e2e:prod": "nx run-many -t e2e --configuration=production",
     "build-and-test": "npm run build-and-test:prod",
-    "build-and-test:prod": "NODE_ENV=production nx run-many -t lint test build e2e --configuration=production",
+    "build-and-test:prod": "nx run-many -t lint test build e2e --configuration=production",
     "prepare": "husky"
   },
   "private": true,
