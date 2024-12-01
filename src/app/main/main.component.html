@@ -1,6 +1,6 @@
 <div nz-row [nzGutter]="16">
   <div nz-col [nzXs]="24" [nzLg]="8">
-    <nz-card nzTitle="Kalendarz">
+    <nz-card nzTitle="Kalendarz" data-test-id="main-calendar">
       <nz-calendar
         [(ngModel)]="date"
         [nzFullscreen]="false"
@@ -21,7 +21,7 @@
   </div>
 
   <div nz-col [nzXs]="24" [nzLg]="16">
-    <nz-card data-test-id="card-title" [nzTitle]="'Lista miejsc ' + (date | date: 'd MMMM yyyy')">
+    <nz-card data-test-id="main-list-title" [nzTitle]="'Lista miejsc ' + (date | date: 'd MMMM yyyy')" id="main-list-title">
       <nz-table
         [nzFrontPagination]="false"
         #basicTable
@@ -29,10 +29,10 @@
       >
         <thead>
           <tr>
-            <th>Numer miejsca</th>
-            <th>Status</th>
-            <th>Zarezerwowane przez</th>
-            <th>Akcje</th>
+            <th data-test-id="main-list-spot-number">Numer miejsca</th>
+            <th data-test-id="main-list-spot-status">Status</th>
+            <th data-test-id="main-list-spot-reservation">Zarezerwowane przez</th>
+            <th data-test-id="main-list-spot-action">Akcje</th>
           </tr>
         </thead>
         <tbody>

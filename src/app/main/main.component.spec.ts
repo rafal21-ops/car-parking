@@ -106,7 +106,7 @@ describe('TestingComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(
-      compiled.querySelector('[data-test-id="card-title"]')?.textContent
+      compiled.querySelector('[data-test-id="main-list-title"]')?.textContent
     ).toContain('Lista miejsc');
   });
 });
